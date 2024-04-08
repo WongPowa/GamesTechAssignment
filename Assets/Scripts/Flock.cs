@@ -1,16 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
+using static UnityEngine.GraphicsBuffer;
 
 public class Flock : MonoBehaviour
 {
     public float speed;
     [Range(0, 360)]
     public float fov;
-    float rotationSpeed = 5.0f;
+    public float rotationSpeed;
     public Vector3 wind;
 
-    Vector3 averagePosition;
+    private string boidTag;
+    private string funIncrementFollowers;
+    private string funDecrementFollowers;
 
     //Cohesion
     [Header("Cohesion")]
@@ -18,7 +23,6 @@ public class Flock : MonoBehaviour
     public float cohesionFactor;
 
     //Seperation
-    //public float seperationRange;
     [Header("Separation")]
     public float separationRadius;
     public float separationFactor;
@@ -29,17 +33,29 @@ public class Flock : MonoBehaviour
     public float alignmentRadius;
     public float alignmentFactor;
 
+    //Obstacle Avoidance
     [Header("Obstacle Avoidance")]
     public float maxDistance;
     public LayerMask layerAvoid;
-    public float avoidSphereRadius;
     public float avoidFactor;
+
+    //Leader
+    private HashSet<int> boidsBehind;
+    private int numberOfBoidsBehind;
+
+    private void Awake() //prevent NPE
+    {
+        boidsBehind = new HashSet<int>();
+    }
 
     // Start is called before the first frame update
     void Start()
     {
         //speed = Random.Range(0.1f, 1f);
         separationForce = Vector3.zero;
+        boidTag = "Boid";
+        funIncrementFollowers = "IncrementFollowers";
+        funDecrementFollowers = "DecrementFollowers";
     }
 
     // Update is called once per frame
@@ -63,13 +79,13 @@ public class Flock : MonoBehaviour
     void ApplyRules() //missing predator & missing fov
     {
         GameObject[] gos;
-        gos = GameObject.FindGameObjectsWithTag("Boid");
+        gos = GameObject.FindGameObjectsWithTag(boidTag);
 
         Vector3 vCentre = Vector3.zero;
         Vector3 vSeparate = Vector3.zero;
         Vector3 vAlign = Vector3.zero;
         Vector3 vAvoid = Vector3.zero;
-        Vector3 goalPos = GlobalFlock.goalPos;
+        //Vector3 goalPos = GlobalFlock.goalPos;
 
         //float gSpeed = 0;
         float dist = 0;
@@ -81,18 +97,15 @@ public class Flock : MonoBehaviour
         {
             if (go != this.gameObject)
             {
-
                 float angle = Vector3.Angle(go.transform.position - transform.position, transform.forward);
-
 
                 if (angle * 2 <= fov)
                 {
-                    dist = Vector3.Distance(go.transform.position, this.transform.position);
+                    gameObject.SendMessage(funIncrementFollowers, go);
+
+                    dist = Vector3.Distance(go.transform.position, transform.position);
 
                     //gSpeed = gSpeed + go.GetComponent<Flock>().speed;
-
-                    //float ratio = Mathf.Clamp01((transform.position - go.transform.position).magnitude) / dist;
-                    //separationForce -= ratio * (transform.position - go.transform.position);
 
                     if (dist <= cohesionRadius)
                     {
@@ -111,10 +124,12 @@ public class Flock : MonoBehaviour
                         vSeparate = vSeparate + (transform.position - go.transform.position) / dist;
                         separationGroupSize++;
                     }
-
                     vAvoid = ObstacleAvoid();
                     
+                } else {
+                    gameObject.SendMessage(funDecrementFollowers, go);
                 }
+
             }
         }
 
@@ -162,7 +177,20 @@ public class Flock : MonoBehaviour
             }
         }
 
-
         return vAvoid;
     }
+
+    private void IncrementFollowers(GameObject go)
+    {
+        boidsBehind.Add(go.GetInstanceID());
+        numberOfBoidsBehind = boidsBehind.Count;
+
+    }
+
+    private void DecrementFollowers(GameObject go)
+    {
+        boidsBehind.Remove(go.GetInstanceID());
+        numberOfBoidsBehind = boidsBehind.Count;
+    }
+
 }
