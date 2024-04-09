@@ -37,7 +37,7 @@ public class FlockManager : MonoBehaviour
     [SerializeField] private float _obstacleDistance;
     public float obstacleDistance { get { return _obstacleDistance; } }
 
-    [Range(0, 100)]
+    [Range(0, 10)]
     [SerializeField] private float _boundsDistance;
     public float boundsDistance { get { return _boundsDistance; } }
 
@@ -57,12 +57,12 @@ public class FlockManager : MonoBehaviour
     public float aligementWeight { get { return _aligementWeight; } }
 
     [Range(0, 10)]
-    [SerializeField] private float _boundsWeight;
-    public float boundsWeight { get { return _boundsWeight; } }
-
-    [Range(0, 100)]
     [SerializeField] private float _obstacleWeight;
     public float obstacleWeight { get { return _obstacleWeight; } }
+
+    [Range(0, 10)]
+    [SerializeField] private float _boundsWeight;
+    public float boundsWeight { get { return _boundsWeight; } }
 
     public FlockUnit[] allUnits { get; set; }
 
