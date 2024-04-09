@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,12 +26,12 @@ public class FlockManager : MonoBehaviour
     public float cohesionDistance { get { return _cohesionDistance; } }
 
     [Range(0, 10)]
-    [SerializeField] private float _separationDistance;
-    public float separationDistance { get { return _separationDistance; } }
+    [SerializeField] private float _avoidanceDistance;
+    public float avoidanceDistance { get { return _avoidanceDistance; } }
 
     [Range(0, 10)]
-    [SerializeField] private float _alignmentDistance;
-    public float alignmentDistance { get { return _alignmentDistance; } }
+    [SerializeField] private float _aligementDistance;
+    public float aligementDistance { get { return _aligementDistance; } }
 
     [Range(0, 10)]
     [SerializeField] private float _obstacleDistance;
@@ -48,12 +49,12 @@ public class FlockManager : MonoBehaviour
     public float cohesionWeight { get { return _cohesionWeight; } }
 
     [Range(0, 10)]
-    [SerializeField] private float _separationWeight;
-    public float separationWeight { get { return _separationWeight; } }
+    [SerializeField] private float _avoidanceWeight;
+    public float avoidanceWeight { get { return _avoidanceWeight; } }
 
     [Range(0, 10)]
-    [SerializeField] private float _alignmentWeight;
-    public float alignmentWeight { get { return _alignmentWeight; } }
+    [SerializeField] private float _aligementWeight;
+    public float aligementWeight { get { return _aligementWeight; } }
 
     [Range(0, 10)]
     [SerializeField] private float _boundsWeight;
@@ -86,7 +87,7 @@ public class FlockManager : MonoBehaviour
             var randomVector = UnityEngine.Random.insideUnitSphere;
             randomVector = new Vector3(randomVector.x * spawnBounds.x, randomVector.y * spawnBounds.y, randomVector.z * spawnBounds.z);
             var spawnPosition = transform.position + randomVector;
-            var rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360) + 90, 0);
+            var rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0, 360), 0);
             allUnits[i] = Instantiate(flockUnitPrefab, spawnPosition, rotation);
             allUnits[i].AssignFlock(this);
             allUnits[i].InitializeSpeed(UnityEngine.Random.Range(minSpeed, maxSpeed));
