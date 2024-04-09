@@ -226,7 +226,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 691228646}
-  - component: {fileID: 691228645}
   - component: {fileID: 691228644}
   m_Layer: 0
   m_Name: FlockManager
@@ -247,33 +246,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b19e9f0d478526d47aa2e6e62f174eaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &691228645
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 691228643}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f33bfe6f32bdb32499f2a174aba85125, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 0
-  fov: 0
-  rotationSpeed: 0
-  wind: {x: 0, y: 0, z: 0}
-  cohesionRadius: 0
-  cohesionFactor: 0
-  separationRadius: 0
-  separationFactor: 0
-  alignmentRadius: 0
-  alignmentFactor: 0
-  maxDistance: 0
-  layerAvoid:
-    serializedVersion: 2
-    m_Bits: 0
-  avoidFactor: 0
+  flockUnitPrefab: {fileID: -1779201136308894751, guid: 94c015d94f6e5364e9b36b960bbe1b77, type: 3}
+  flockSize: 20
+  spawnBounds: {x: 10, y: 5, z: 10}
+  _minSpeed: 2
+  _maxSpeed: 1
+  _cohesionDistance: 3.68
+  _separationDistance: 2
+  _alignmentDistance: 2
+  _obstacleDistance: 0
+  _boundsDistance: 0
+  _cohesionWeight: 2
+  _separationWeight: 1
+  _alignmentWeight: 1
+  _boundsWeight: 0
+  _obstacleWeight: 0
 --- !u!4 &691228646
 Transform:
   m_ObjectHideFlags: 0
@@ -283,7 +270,7 @@ Transform:
   m_GameObject: {fileID: 691228643}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.073147, y: -3.814201, z: 8.793551}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
