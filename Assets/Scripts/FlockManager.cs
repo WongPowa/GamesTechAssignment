@@ -18,7 +18,6 @@ public class FlockManager : MonoBehaviour
     [SerializeField] private float _maxSpeed;
     public float maxSpeed { get { return _maxSpeed; } }
 
-
     [Header("Detection Distances")]
 
     [Range(0, 10)]
@@ -41,6 +40,9 @@ public class FlockManager : MonoBehaviour
     [SerializeField] private float _boundsDistance;
     public float boundsDistance { get { return _boundsDistance; } }
 
+    [Range(0, 10)]
+    [SerializeField] private float _leaderDistance;
+    public float leaderDistance { get { return _leaderDistance; } }
 
     [Header("Behaviour Weights")]
 
@@ -63,6 +65,14 @@ public class FlockManager : MonoBehaviour
     [Range(0, 10)]
     [SerializeField] private float _boundsWeight;
     public float boundsWeight { get { return _boundsWeight; } }
+
+    [Range(0, 100)]
+    [SerializeField] private float _arrivalWeight;
+    public float arrivalWeight { get { return _arrivalWeight; } }
+
+    [Header("Targets")]
+    public List<GameObject> targets = new List<GameObject>();
+    public Vector3 positionToFollow;
 
     public FlockUnit[] allUnits { get; set; }
 

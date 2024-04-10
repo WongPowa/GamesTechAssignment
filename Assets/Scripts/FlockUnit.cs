@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class FlockUnit : MonoBehaviour
 {
@@ -13,10 +14,15 @@ public class FlockUnit : MonoBehaviour
     private List<FlockUnit> cohesionNeighbours = new List<FlockUnit>();
     private List<FlockUnit> avoidanceNeighbours = new List<FlockUnit>();
     private List<FlockUnit> aligementNeighbours = new List<FlockUnit>();
+    private List<FlockUnit> leaderNeighbours = new List<FlockUnit>();
     private FlockManager assignedFlock;
     private Vector3 currentVelocity;
     private Vector3 currentObstacleAvoidanceVector;
     private float speed;
+
+    public bool isLeader;
+    public int numberOfNeighbourinfront;
+
 
     public Transform myTransform { get; set; }
 
@@ -39,14 +45,27 @@ public class FlockUnit : MonoBehaviour
     {
         FindNeighbours();
         CalculateSpeed();
+        DetermineLeader();
 
         var cohesionVector = CalculateCohesionVector() * assignedFlock.cohesionWeight;
         var avoidanceVector = CalculateAvoidanceVector() * assignedFlock.avoidanceWeight;
         var aligementVector = CalculateAligementVector() * assignedFlock.aligementWeight;
         var boundsVector = CalculateBoundsVector() * assignedFlock.boundsWeight;
         var obstacleVector = CalculateObstacleVector() * assignedFlock.obstacleWeight;
+        var arrivalVector = Vector3.zero;
 
-        var moveVector = cohesionVector + avoidanceVector + aligementVector + boundsVector + obstacleVector;
+
+        if (isLeader)
+        {
+            gameObject.GetComponentInChildren<Renderer>().material.color = Color.yellow;  
+            arrivalVector = CalculateArrivalVector() * assignedFlock.arrivalWeight;
+        } else
+        {
+            gameObject.GetComponentInChildren<Renderer>().material.color = Color.white;
+            arrivalVector = CalculateArrivalVectorBehindLeader() * assignedFlock.arrivalWeight;
+        }
+
+        var moveVector = cohesionVector + avoidanceVector + aligementVector + boundsVector + obstacleVector + arrivalVector;
         moveVector = Vector3.SmoothDamp(myTransform.forward, moveVector, ref currentVelocity, smoothDamp);
         moveVector = moveVector.normalized * speed;
         if (moveVector == Vector3.zero)
@@ -54,15 +73,16 @@ public class FlockUnit : MonoBehaviour
 
         myTransform.forward = moveVector;
         myTransform.position += moveVector * Time.deltaTime;
+
     }
-
-
 
     private void FindNeighbours()
     {
         cohesionNeighbours.Clear();
         avoidanceNeighbours.Clear();
         aligementNeighbours.Clear();
+        leaderNeighbours.Clear();
+
         var allUnits = assignedFlock.allUnits;
         for (int i = 0; i < allUnits.Length; i++)
         {
@@ -81,6 +101,10 @@ public class FlockUnit : MonoBehaviour
                 if (currentNeighbourDistanceSqr <= assignedFlock.aligementDistance * assignedFlock.aligementDistance)
                 {
                     aligementNeighbours.Add(currentUnit);
+                }
+                if (currentNeighbourDistanceSqr <= assignedFlock.leaderDistance * assignedFlock.leaderDistance)
+                {
+                    leaderNeighbours.Add(currentUnit);
                 }
             }
         }
@@ -197,7 +221,6 @@ public class FlockUnit : MonoBehaviour
         var selectedDirection = Vector3.zero;
         for (int i = 0; i < directionsToCheckWhenAvoidingObstacles.Length; i++)
         {
-
             RaycastHit hit;
             var currentDirection = myTransform.TransformDirection(directionsToCheckWhenAvoidingObstacles[i].normalized);
             if (Physics.Raycast(myTransform.position, currentDirection, out hit, assignedFlock.obstacleDistance, obstacleMask))
@@ -220,8 +243,89 @@ public class FlockUnit : MonoBehaviour
         return selectedDirection.normalized;
     }
 
+
     private bool IsInFOV(Vector3 position)
     {
         return Vector3.Angle(myTransform.forward, position - myTransform.position) <= FOVAngle;
+    }
+
+    private Vector3 CalculateArrivalVector() //missing arrival
+    {
+        var arrivalVector = Vector3.zero;
+
+        if (assignedFlock.targets.Count == 0)
+            return Vector3.zero;
+
+        if (assignedFlock.targets.Count != 0)
+        {
+            arrivalVector = assignedFlock.targets[0].transform.position - myTransform.position;
+        } else
+        {
+            arrivalVector = Vector3.zero;
+        }
+
+        return arrivalVector.normalized;
+    } 
+
+    private Vector3 CalculateArrivalVectorBehindLeader() //missing arrival
+    {
+        var arrivalVector = Vector3.zero;
+
+        if (leaderNeighbours.Count == 0)
+            return Vector3.zero;
+
+        for (int i = 0; i < leaderNeighbours.Count; i++)
+        {
+            if (IsInFOV(leaderNeighbours[i].myTransform.position) && leaderNeighbours[i].isLeader)
+            {
+                arrivalVector = (leaderNeighbours[i].myTransform.position + assignedFlock.positionToFollow)  - myTransform.position;
+                return arrivalVector.normalized;
+            }
+        }
+
+        return arrivalVector.normalized;
+    }
+
+    private void DetermineLeader()
+    {
+        FindNeighboursInFront();
+
+        if (leaderNeighbours.Count != 0)
+        {
+            for (int i = 0; i < leaderNeighbours.Count; i++)
+            {
+                if (IsInFOV(leaderNeighbours[i].myTransform.position) && leaderNeighbours[i].isLeader)
+                {
+                    float distSelf = Vector3.Distance(assignedFlock.targets[0].transform.position, myTransform.position);
+                    float distOther = Vector3.Distance(assignedFlock.targets[0].transform.position, leaderNeighbours[i].myTransform.position);
+
+                    if (distSelf < distOther)
+                        isLeader = false;
+                }
+            }
+
+        } else
+        {
+            isLeader = true;
+        }
+    }
+
+    private void FindNeighboursInFront()
+    {
+        int neighboursInFOV = -1; //idk why
+        for (int i = 0; i < leaderNeighbours.Count; i++)
+        {
+            if (IsInFOV(leaderNeighbours[i].myTransform.position))
+            {
+                neighboursInFOV++;
+            }
+        }
+
+        numberOfNeighbourinfront = neighboursInFOV;
+    }
+
+    private void infrontOfLeader(bool hasRun)
+    {
+            
     }
 }

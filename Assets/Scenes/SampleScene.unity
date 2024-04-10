@@ -799,7 +799,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boid: {fileID: 3051690146355984631, guid: 5df1cdd36fd9484429698d5f2e675a7a, type: 3}
-  numberOfBoids: 5
+  numberOfBoids: 10
   is2D: 0
 --- !u!1 &1140583499
 GameObject:
