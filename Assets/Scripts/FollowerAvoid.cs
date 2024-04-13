@@ -4,46 +4,30 @@ using UnityEngine;
 
 public class FollowerAvoid : MonoBehaviour
 {
-    public bool isInFront;
-    public bool isLeaderInFront;
-    public GameObject leaderObjInFront;
-
-    private void Start()
-    {
-        isInFront = false;
-    }
+    private FlockUnit otherFU;
+    public FlockUnit ownFU;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Boid")
+        if (other.gameObject.tag == "Boid" && ownFU.isLeader)
         {
-            FlockUnit fu = other.gameObject.GetComponent<FlockUnit>();
+            otherFU = other.gameObject.GetComponent<FlockUnit>();
 
-            if (fu != null)
+            if (otherFU != null)
             {
-                if (!fu.isLeader) //fu is not leader
-                {
-                    isInFront = true;
-                    isLeaderInFront = false;
-                    fu.inFrontOfLeader = true;
-                    fu.positionToAvoid = transform.position;
-                }
-                else //fu is leader
-                {
-                    isLeaderInFront = true;
-                    leaderObjInFront = other.gameObject;
-                    isInFront = true;
-                }
+                otherFU.positionToAvoid = transform.position;
             }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.tag == "Boid")
+        if (other.gameObject.tag == "Boid" && ownFU.isLeader)
         {
-            isLeaderInFront = false;
-            isInFront = false;
+            if (otherFU != null)
+            {
+                otherFU.positionToAvoid = Vector3.zero;
+            }
         }
     }
 }
