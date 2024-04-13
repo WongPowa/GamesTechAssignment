@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -9,6 +11,7 @@ public class FlockUnit : MonoBehaviour
     [SerializeField] private float FOVAngle;
     [SerializeField] private float smoothDamp;
     [SerializeField] private LayerMask obstacleMask;
+    [SerializeField] private LayerMask leaderViewMask;
     [SerializeField] private Vector3[] directionsToCheckWhenAvoidingObstacles;
 
     private List<FlockUnit> cohesionNeighbours = new List<FlockUnit>();
@@ -21,8 +24,18 @@ public class FlockUnit : MonoBehaviour
     private float speed;
 
     public bool isLeader;
-    public int numberOfNeighbourinfront;
+    public bool inFrontOfLeader;
+    public Vector3 positionToAvoid;
+    public GameObject objectInFrontOfLeader;
+    private FollowerAvoid followerAvoid;
+    private bool isTimerRunning;
 
+    private void Start()
+    {
+        followerAvoid = objectInFrontOfLeader.GetComponent<FollowerAvoid>();
+        isLeader = true;
+        isTimerRunning = false;
+    }
 
     public Transform myTransform { get; set; }
 
@@ -53,29 +66,36 @@ public class FlockUnit : MonoBehaviour
         var boundsVector = CalculateBoundsVector() * assignedFlock.boundsWeight;
         var obstacleVector = CalculateObstacleVector() * assignedFlock.obstacleWeight;
         var arrivalVector = Vector3.zero;
+        var avoidLeaderPathVector = Vector3.zero;
 
 
-        if (isLeader)
+        if (isLeader && assignedFlock.targets.Count != 0) //only when there is targets, there can be a leader
         {
-            gameObject.GetComponentInChildren<Renderer>().material.color = Color.yellow;  
+            gameObject.GetComponentInChildren<Renderer>().material.color = Color.yellow;
             arrivalVector = CalculateArrivalVector() * assignedFlock.arrivalWeight;
-        } else
+
+        } else if (assignedFlock.targets.Count != 0) //not leader but target is present
         {
+            avoidLeaderPathVector = CalculateAvoidLeaderPathVector() * assignedFlock.avoidLeaderPathWeight;
             gameObject.GetComponentInChildren<Renderer>().material.color = Color.white;
             arrivalVector = CalculateArrivalVectorBehindLeader() * assignedFlock.arrivalWeight;
         }
 
-        var moveVector = cohesionVector + avoidanceVector + aligementVector + boundsVector + obstacleVector + arrivalVector;
+        var moveVector = cohesionVector + avoidanceVector + aligementVector + boundsVector + obstacleVector + arrivalVector + avoidLeaderPathVector;
         moveVector = Vector3.SmoothDamp(myTransform.forward, moveVector, ref currentVelocity, smoothDamp);
+        //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveVector), smoothDamp);
         moveVector = moveVector.normalized * speed;
+
         if (moveVector == Vector3.zero)
+        {
             moveVector = transform.forward;
+        }
 
         myTransform.forward = moveVector;
         myTransform.position += moveVector * Time.deltaTime;
 
     }
-
+        
     private void FindNeighbours()
     {
         cohesionNeighbours.Clear();
@@ -192,22 +212,49 @@ public class FlockUnit : MonoBehaviour
         return isNearCenter ? offsetToCenter.normalized : Vector3.zero;
     }
 
+    private Vector3 CalculateAvoidLeaderPathVector()
+    {
+        Vector3 avoidLeaderPathVector = Vector3.zero;
+
+        inFrontOfLeader = positionToAvoid == Vector3.zero;
+
+        if (!inFrontOfLeader)
+        {
+            return Vector3.zero;
+        }
+
+        avoidLeaderPathVector = myTransform.position - positionToAvoid;
+
+        return avoidLeaderPathVector.normalized;
+    }
+
     private Vector3 CalculateObstacleVector()
     {
         var obstacleVector = Vector3.zero;
         RaycastHit hit;
-        if (Physics.Raycast(myTransform.position, myTransform.forward, out hit, assignedFlock.obstacleDistance, obstacleMask))
+
+        for (float i = -FOVAngle / 4; i <= FOVAngle; i += FOVAngle / 8)
         {
-            obstacleVector = FindBestDirectionToAvoidObstacle();
+            Vector3 vForward = Quaternion.AngleAxis(i, Vector3.up) * transform.forward;
+
+            //if (Physics.SphereCast(myTransform.position, 0.5f, vForward, out hit, assignedFlock.obstacleDistance, obstacleMask))
+            //Rotate the raycast around the y-axis
+            if (Physics.Raycast(myTransform.position, vForward, out hit, assignedFlock.obstacleDistance, obstacleMask))
+            {
+                obstacleVector = FindBestDirectionToAvoidObstacle();
+                break;
+            }
+
+            else
+            {
+                currentObstacleAvoidanceVector = Vector3.zero;
+            }
         }
-        else
-        {
-            currentObstacleAvoidanceVector = Vector3.zero;
-        }
+
         return obstacleVector;
     }
 
-    private Vector3 FindBestDirectionToAvoidObstacle()
+    private Vector3 FindBestDirectionToAvoidObstacle() //modifed to avoid both obstacle and leaderview
     {
         if (currentObstacleAvoidanceVector != Vector3.zero)
         {
@@ -243,13 +290,12 @@ public class FlockUnit : MonoBehaviour
         return selectedDirection.normalized;
     }
 
-
     private bool IsInFOV(Vector3 position)
     {
         return Vector3.Angle(myTransform.forward, position - myTransform.position) <= FOVAngle;
     }
 
-    private Vector3 CalculateArrivalVector() //missing arrival
+    private Vector3 CalculateArrivalVector()
     {
         var arrivalVector = Vector3.zero;
 
@@ -259,15 +305,13 @@ public class FlockUnit : MonoBehaviour
         if (assignedFlock.targets.Count != 0)
         {
             arrivalVector = assignedFlock.targets[0].transform.position - myTransform.position;
-        } else
-        {
-            arrivalVector = Vector3.zero;
+            CalculateSlowDownSpeed(assignedFlock.targets[0].transform.position);
         }
 
         return arrivalVector.normalized;
     } 
 
-    private Vector3 CalculateArrivalVectorBehindLeader() //missing arrival
+    private Vector3 CalculateArrivalVectorBehindLeader() //TODO: issue is when the follower tries to go behind leader, it will get infront of the leader view, it will then turn the leader into a follower. DO FOLLOWER AVOID VIEW,
     {
         var arrivalVector = Vector3.zero;
 
@@ -278,7 +322,11 @@ public class FlockUnit : MonoBehaviour
         {
             if (IsInFOV(leaderNeighbours[i].myTransform.position) && leaderNeighbours[i].isLeader)
             {
-                arrivalVector = (leaderNeighbours[i].myTransform.position + assignedFlock.positionToFollow)  - myTransform.position;
+                Vector3 positionBehindLeader = leaderNeighbours[i].myTransform.position + assignedFlock.positionToFollow;
+
+                arrivalVector = (positionBehindLeader)  - myTransform.position;
+                CalculateSlowDownSpeed(positionBehindLeader);
+                
                 return arrivalVector.normalized;
             }
         }
@@ -286,46 +334,89 @@ public class FlockUnit : MonoBehaviour
         return arrivalVector.normalized;
     }
 
+    private void CalculateSlowDownSpeed(Vector3 position)
+    {
+        float dist = Vector3.Distance(myTransform.position, position);
+
+        if (dist > assignedFlock.arrivalSlowDistance)
+        {
+            speed = assignedFlock.maxSpeed;
+        }
+        else
+        {
+            speed = assignedFlock.maxSpeed * dist / assignedFlock.arrivalSlowDistance;
+        }
+
+        if (dist < assignedFlock.arrivalStopDistance)
+        {
+            speed = 0;
+        }
+    }
+
     private void DetermineLeader()
     {
-        FindNeighboursInFront();
-
-        if (leaderNeighbours.Count != 0)
+        if (!followerAvoid.isInFront && assignedFlock.targets.Count != 0 && !isTimerRunning && !followerAvoid.isLeaderInFront) //if no followers and leaders infront become leader
         {
-            for (int i = 0; i < leaderNeighbours.Count; i++)
-            {
-                if (IsInFOV(leaderNeighbours[i].myTransform.position) && leaderNeighbours[i].isLeader)
-                {
-                    float distSelf = Vector3.Distance(assignedFlock.targets[0].transform.position, myTransform.position);
-                    float distOther = Vector3.Distance(assignedFlock.targets[0].transform.position, leaderNeighbours[i].myTransform.position);
+            BecomeLeader();
 
-                    if (distSelf < distOther)
-                        isLeader = false;
+            if (followerAvoid.isLeaderInFront)
+            {
+                float distSelf = Vector3.Distance(assignedFlock.targets[0].transform.position, myTransform.position);
+                float distOther = Vector3.Distance(assignedFlock.targets[0].transform.position, followerAvoid.leaderObjInFront.transform.position);
+
+                if (distSelf > distOther) //if distance of leaderobjinfront is closer to target, become a follower
+                {
+                    BecomeFollower();
                 }
             }
-
-        } else
+        } 
+        else if (followerAvoid.isInFront && assignedFlock.targets.Count != 0) //if has follower infront dont be leader
         {
-            isLeader = true;
+            BecomeFollower();
         }
     }
 
-    private void FindNeighboursInFront()
+    private bool isFollowerInFront()
     {
-        int neighboursInFOV = -1; //idk why
+        if (leaderNeighbours.Count == 0)
+            return false;
+
         for (int i = 0; i < leaderNeighbours.Count; i++)
         {
-            if (IsInFOV(leaderNeighbours[i].myTransform.position))
+            float dist = Vector3.Distance(myTransform.position, leaderNeighbours[i].transform.position);
+
+            if (IsInFOV(leaderNeighbours[i].myTransform.position) && dist < assignedFlock.leaderDistance)
             {
-                neighboursInFOV++;
+                return true;
             }
         }
 
-        numberOfNeighbourinfront = neighboursInFOV;
+        return false;
+    } //not in use
+
+    private void BecomeFollower()
+    {
+        isLeader = false;
+        StartCoroutine(StartTimerDecay());
     }
 
-    private void infrontOfLeader(bool hasRun)
+    private void BecomeLeader()
     {
-            
+        isLeader = true;
+        StartCoroutine(StartTimerDecay());
+    }
+
+    IEnumerator StartTimerDecay()
+    {
+        isTimerRunning = true;
+        int counter = assignedFlock.timeToLeader;
+        while (counter > 0)
+        {
+            yield return new WaitForSeconds(1);
+            counter--;
+        }
+
+        isTimerRunning = false;
+        isLeader = true;
     }
 }

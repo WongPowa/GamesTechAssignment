@@ -44,6 +44,15 @@ public class FlockManager : MonoBehaviour
     [SerializeField] private float _leaderDistance;
     public float leaderDistance { get { return _leaderDistance; } }
 
+    [Range(0, 10)]
+    [SerializeField] private float _arrivalSlowDistance;
+    public float arrivalSlowDistance { get { return _arrivalSlowDistance; } }
+
+    [Range(0, 10)]
+    [SerializeField] private float _arrivalStopDistance;
+    public float arrivalStopDistance { get { return _arrivalStopDistance; } }
+
+
     [Header("Behaviour Weights")]
 
     [Range(0, 10)]
@@ -66,13 +75,19 @@ public class FlockManager : MonoBehaviour
     [SerializeField] private float _boundsWeight;
     public float boundsWeight { get { return _boundsWeight; } }
 
-    [Range(0, 100)]
+    [Range(0, 10)]
     [SerializeField] private float _arrivalWeight;
     public float arrivalWeight { get { return _arrivalWeight; } }
+
+    [Range(0, 10)]
+    [SerializeField] private float _avoidLeaderPathWeight;
+    public float avoidLeaderPathWeight { get { return _avoidLeaderPathWeight; } }
 
     [Header("Targets")]
     public List<GameObject> targets = new List<GameObject>();
     public Vector3 positionToFollow;
+    public Vector3 objectSpawnPosition;
+    public int timeToLeader;
 
     public FlockUnit[] allUnits { get; set; }
 
