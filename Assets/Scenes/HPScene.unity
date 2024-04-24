@@ -152,7 +152,7 @@ Transform:
   m_GameObject: {fileID: 423745050}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -19.243668, y: 220.62627, z: -215.2}
+  m_LocalPosition: {x: -19.243668, y: -23.9, z: -215.2}
   m_LocalScale: {x: 50, y: 1, z: 50}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -226,7 +226,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0177cdb9cbe4ae748a1a5457080e2ea1, type: 2}
+  - {fileID: 2100000, guid: af995f2e2fe6a264b887bb9c8ef95dc6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -526,31 +526,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b19e9f0d478526d47aa2e6e62f174eaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flockUnitPrefab: {fileID: 1634583235985397500, guid: 8a86ff36d19d175448736a6ea2948020, type: 3}
+  flockUnitPrefab: {fileID: 2941041112776217607, guid: 10eda4decf35c3e469784d9af3c14219, type: 3}
   flockSize: 50
-  spawnBounds: {x: 10, y: 5, z: 10}
-  _minSpeed: 8
-  _maxSpeed: 10
-  _cohesionDistance: 10
+  spawnBounds: {x: 10, y: 0, z: 10}
+  _minSpeed: 2
+  _maxSpeed: 5
+  _cohesionDistance: 5
   _avoidanceDistance: 5
   _aligementDistance: 5
-  _obstacleDistance: 10
+  _obstacleDistance: 5
   _boundsDistance: 5
-  _leaderDistance: 10
+  _leaderDistance: 5
   _arrivalSlowDistance: 5
-  _arrivalStopDistance: 2
-  _cohesionWeight: 1
-  _avoidanceWeight: 1
-  _aligementWeight: 1
-  _obstacleWeight: 10
-  _boundsWeight: 1
-  _arrivalWeight: 10
-  _avoidLeaderPathWeight: 1
+  _arrivalStopDistance: 5
+  _cohesionWeight: 5
+  _avoidanceWeight: 5
+  _aligementWeight: 5
+  _obstacleWeight: 5
+  _boundsWeight: 5
+  _arrivalWeight: 5
+  _avoidLeaderPathWeight: 5
   targets:
   - {fileID: 545103577}
   positionToFollow: {x: 0, y: 0, z: -1}
   objectSpawnPosition: {x: 0, y: 0, z: 10}
-  timeToLeader: 10
+  timeToLeader: 300
 --- !u!4 &691228646
 Transform:
   m_ObjectHideFlags: 0
@@ -595,7 +595,7 @@ Transform:
   m_GameObject: {fileID: 761599153}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -19.243668, y: 171.62627, z: -215.2}
+  m_LocalPosition: {x: -19.243668, y: 24.7, z: -215.2}
   m_LocalScale: {x: 50, y: 1, z: 50}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -875,7 +875,7 @@ Transform:
   m_GameObject: {fileID: 1117700562}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: -19.243668, y: 196.12627, z: -190.7}
+  m_LocalPosition: {x: -19.243668, y: 0, z: -190.7}
   m_LocalScale: {x: 50, y: 1, z: 50}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1100,7 +1100,7 @@ Transform:
   m_GameObject: {fileID: 1175954824}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: -19.243668, y: 196.12627, z: -239.7}
+  m_LocalPosition: {x: -19.243668, y: 0, z: -239.7}
   m_LocalScale: {x: 50, y: 1, z: 50}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1229,7 +1229,7 @@ Transform:
   m_GameObject: {fileID: 1200475657}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 19.243668, y: -191.564, z: 215.20377}
+  m_LocalPosition: {x: 19.243668, y: -5.7, z: 215.20377}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1270,7 +1270,7 @@ Transform:
   m_GameObject: {fileID: 1272276690}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -43.743664, y: 196.12627, z: -215.2}
+  m_LocalPosition: {x: -43.743664, y: 0, z: -215.2}
   m_LocalScale: {x: 50, y: 1, z: 50}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1508,7 +1508,7 @@ Transform:
   m_GameObject: {fileID: 1652626471}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 5.2563295, y: 196.12627, z: -215.2}
+  m_LocalPosition: {x: 5.2563295, y: 0, z: -215.2}
   m_LocalScale: {x: 50, y: 1, z: 50}
   m_ConstrainProportionsScale: 0
   m_Children: []

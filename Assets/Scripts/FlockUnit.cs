@@ -84,7 +84,7 @@ public class FlockUnit : MonoBehaviour
 
         var moveVector = cohesionVector + avoidanceVector + aligementVector + boundsVector + obstacleVector + arrivalVector + avoidLeaderPathVector;
         moveVector = Vector3.SmoothDamp(myTransform.forward, moveVector, ref currentVelocity, smoothDamp);
-        //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveVector), smoothDamp);
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveVector), smoothDamp);
         moveVector = moveVector.normalized * speed;
 
         if (moveVector == Vector3.zero)
