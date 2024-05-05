@@ -58,7 +58,9 @@ public class FlockUnit : MonoBehaviour
     {
         FindNeighbours();
         CalculateSpeed();
-        DetermineLeader();
+
+        if (assignedFlock.isLeaderOn)
+            DetermineLeader();
 
         var cohesionVector = CalculateCohesionVector() * assignedFlock.cohesionWeight;
         var avoidanceVector = CalculateAvoidanceVector() * assignedFlock.avoidanceWeight;
@@ -68,19 +70,24 @@ public class FlockUnit : MonoBehaviour
         var arrivalVector = Vector3.zero;
         var avoidLeaderPathVector = Vector3.zero;
 
-
-        if (isLeader && assignedFlock.targets.Count != 0) //only when there is targets, there can be a leader
+        if (assignedFlock.isLeaderOn)
         {
-            gameObject.GetComponentInChildren<Renderer>().material.color = Color.yellow;
+            if (isLeader && assignedFlock.targets.Count != 0) //only when there is targets, there can be a leader
+            {
+                gameObject.GetComponentInChildren<Renderer>().material.color = Color.yellow; //to change color of capsule its needs to be first in hierarchy
+                arrivalVector = CalculateArrivalVector() * assignedFlock.arrivalWeight;
+            }
+            else if (assignedFlock.targets.Count != 0) //not leader but target is present
+            {
+                avoidLeaderPathVector = CalculateAvoidLeaderPathVector() * assignedFlock.avoidLeaderPathWeight;
+                gameObject.GetComponentInChildren<Renderer>().material.color = Color.white;
+                arrivalVector = CalculateArrivalVectorBehindLeader() * assignedFlock.arrivalWeight;
+            }
+        } else if (assignedFlock.targets.Count != 0 )
+        {
             arrivalVector = CalculateArrivalVector() * assignedFlock.arrivalWeight;
+        }
 
-        }
-        else if (assignedFlock.targets.Count != 0) //not leader but target is present
-        {
-            avoidLeaderPathVector = CalculateAvoidLeaderPathVector() * assignedFlock.avoidLeaderPathWeight;
-            gameObject.GetComponentInChildren<Renderer>().material.color = Color.white;
-            arrivalVector = CalculateArrivalVectorBehindLeader() * assignedFlock.arrivalWeight;
-        }
 
         var moveVector = cohesionVector + avoidanceVector + aligementVector + boundsVector + obstacleVector + arrivalVector + avoidLeaderPathVector;
         moveVector = Vector3.SmoothDamp(myTransform.forward, moveVector, ref currentVelocity, smoothDamp);
@@ -123,7 +130,7 @@ public class FlockUnit : MonoBehaviour
                 {
                     aligementNeighbours.Add(currentUnit);
                 }
-                if (currentNeighbourDistanceSqr <= assignedFlock.leaderDistance * assignedFlock.leaderDistance)
+                if (currentNeighbourDistanceSqr <= assignedFlock.leaderDistance * assignedFlock.leaderDistance && assignedFlock.isLeaderOn)
                 {
                     leaderNeighbours.Add(currentUnit);
                 }
@@ -333,7 +340,7 @@ public class FlockUnit : MonoBehaviour
         return arrivalVector.normalized;
     } 
 
-    private Vector3 CalculateArrivalVectorBehindLeader() //TODO: issue is when the follower tries to go behind leader, it will get infront of the leader view, it will then turn the leader into a follower. DO FOLLOWER AVOID VIEW,
+    private Vector3 CalculateArrivalVectorBehindLeader()
     {
         var arrivalVector = Vector3.zero;
 
@@ -400,7 +407,7 @@ public class FlockUnit : MonoBehaviour
                         }
                     }
                 }
-                else if (isBoidInFront && assignedFlock.targets.Count != 0 && !isTimerRunning) //if has follower infront dont be leader
+                else if (isBoidInFront && assignedFlock.targets.Count != 0) //if has follower infront dont be leader
                 {
                     BecomeFollower();
                 }
@@ -410,7 +417,7 @@ public class FlockUnit : MonoBehaviour
 
     private void BecomeFollower()
     {
-        isLeader = false;
+        if (!isTimerRunning) isLeader = false;
     }
 
     private void BecomeLeader()
@@ -418,7 +425,7 @@ public class FlockUnit : MonoBehaviour
         if (!isTimerRunning) StartCoroutine(StartTimerDecay()); 
     }
 
-    IEnumerator StartTimerDecay()
+    IEnumerator StartTimerDecay() //after 5 seconds, become leader
     {
         isTimerRunning = true;
         int counter = assignedFlock.timeToLeader;
