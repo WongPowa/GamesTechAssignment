@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748171, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lineRenderer: {fileID: 162756050}
-  desiredSquares: 25
+  desiredSquares: 50
 --- !u!4 &162756049
 Transform:
   m_ObjectHideFlags: 0
@@ -678,7 +678,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flockUnitPrefab: {fileID: 2941041112776217607, guid: 10eda4decf35c3e469784d9af3c14219, type: 3}
-  flockSize: 5
+  flockSize: 50
   spawnBounds: {x: 10, y: 0, z: 10}
   _minSpeed: 2
   _maxSpeed: 5
@@ -689,20 +689,22 @@ MonoBehaviour:
   _boundsDistance: 5
   _leaderDistance: 5
   _arrivalSlowDistance: 5
-  _arrivalStopDistance: 5
+  _arrivalStopDistance: 0.01
   _cohesionWeight: 2
   _avoidanceWeight: 8
   _aligementWeight: 7
   _obstacleWeight: 5
   _boundsWeight: 5
-  _arrivalWeight: 5
+  _arrivalWeight: 10
   _avoidLeaderPathWeight: 5
-  isLeaderOn: 1
+  isLeaderOn: 0
   targets:
   - {fileID: 545103577}
   positionToFollow: {x: 0, y: 0, z: -1}
   objectSpawnPosition: {x: 0, y: 0, z: 10}
   timeToLeader: 5
+  drawShape: {fileID: 162756048}
+  formShape: 0
 --- !u!4 &691228646
 Transform:
   m_ObjectHideFlags: 0
@@ -1825,7 +1827,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 0177cdb9cbe4ae748a1a5457080e2ea1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

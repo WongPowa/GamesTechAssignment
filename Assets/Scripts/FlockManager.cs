@@ -90,20 +90,30 @@ public class FlockManager : MonoBehaviour
     public Vector3 objectSpawnPosition;
     public int timeToLeader;
 
+    public DrawShape drawShape;
+    public bool formShape;
+
     public FlockUnit[] allUnits { get; set; }
 
     private void Start()
     {
-        
         GenerateUnits();
     }
 
     private void Update()
     {
-        for (int i = 0; i < allUnits.Length; i++)
+        if (formShape)
         {
-            allUnits[i].MoveUnit();
+            FormShape();
+        } else
+        {
+            for (int i = 0; i < allUnits.Length; i++)
+            {
+                allUnits[i].MoveUnit();
+            }
         }
+
+
 
         DrawBox(transform.localScale, Quaternion.identity, spawnBounds, Color.red);
     }
@@ -124,7 +134,7 @@ public class FlockManager : MonoBehaviour
             allUnits[i].AssignFlock(this);
             allUnits[i].InitializeSpeed(UnityEngine.Random.Range(minSpeed, maxSpeed));
         }
-    }
+    }    
 
     public void DrawBox(Vector3 pos, Quaternion rot, Vector3 scale, Color c)
     {
@@ -157,4 +167,15 @@ public class FlockManager : MonoBehaviour
         Debug.DrawLine(point3, point7, c);
         Debug.DrawLine(point4, point8, c);
     }
+
+    private void FormShape()
+    {
+        for (int i = 0; i < drawShape.centerPoints.Count && i < allUnits.Length; i++)
+        {
+            //Debug.Log("i: " + i + "point: " + drawShape.centerPoints[i]);
+            Vector3 midpoint = drawShape.centerPoints[i];
+            allUnits[i].MoveUnit(midpoint);
+        }
+    }
+
 }

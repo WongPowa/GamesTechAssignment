@@ -75,7 +75,7 @@ public class FlockUnit : MonoBehaviour
             if (isLeader && assignedFlock.targets.Count != 0) //only when there is targets, there can be a leader
             {
                 gameObject.GetComponentInChildren<Renderer>().material.color = Color.yellow; //to change color of capsule its needs to be first in hierarchy
-                arrivalVector = CalculateArrivalVector() * assignedFlock.arrivalWeight;
+                arrivalVector = CalculateArrivalVector(assignedFlock.targets[0].transform.position) * assignedFlock.arrivalWeight;
             }
             else if (assignedFlock.targets.Count != 0) //not leader but target is present
             {
@@ -85,25 +85,96 @@ public class FlockUnit : MonoBehaviour
             }
         } else if (assignedFlock.targets.Count != 0 )
         {
-            arrivalVector = CalculateArrivalVector() * assignedFlock.arrivalWeight;
+            arrivalVector = CalculateArrivalVector(assignedFlock.targets[0].transform.position) * assignedFlock.arrivalWeight;
         }
 
+        var moveVector = Vector3.zero;
 
-        var moveVector = cohesionVector + avoidanceVector + aligementVector + boundsVector + obstacleVector + arrivalVector + avoidLeaderPathVector;
-        moveVector = Vector3.SmoothDamp(myTransform.forward, moveVector, ref currentVelocity, smoothDamp);
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveVector), smoothDamp);
-        moveVector = moveVector.normalized * speed;
-
-        if (moveVector == Vector3.zero)
+        if (speed > 0)
         {
-            moveVector = transform.forward;
+            moveVector = cohesionVector + avoidanceVector + aligementVector + boundsVector + obstacleVector + arrivalVector + avoidLeaderPathVector;
+            moveVector = Vector3.SmoothDamp(myTransform.forward, moveVector, ref currentVelocity, smoothDamp);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveVector), smoothDamp);
+            moveVector = moveVector.normalized * speed;
+        } else
+        {
+            arrivalVector = Vector3.SmoothDamp(myTransform.forward, arrivalVector, ref currentVelocity, smoothDamp);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(arrivalVector), smoothDamp);
         }
 
-        myTransform.forward = moveVector;
+
+        //if (moveVector == Vector3.zero)
+        //{
+        //    moveVector = transform.forward;
+        //}
+
+        //myTransform.forward = moveVector;
         myTransform.position += moveVector * Time.deltaTime;
 
     }
-        
+
+    public void MoveUnit(Vector3 position)
+    {
+        FindNeighbours();
+        CalculateSpeed();
+
+        if (assignedFlock.isLeaderOn)
+            DetermineLeader();
+
+        var cohesionVector = CalculateCohesionVector() * assignedFlock.cohesionWeight;
+        var avoidanceVector = CalculateAvoidanceVector() * assignedFlock.avoidanceWeight;
+        var aligementVector = CalculateAligementVector() * assignedFlock.aligementWeight;
+        var boundsVector = CalculateBoundsVector() * assignedFlock.boundsWeight;
+        var obstacleVector = CalculateObstacleVector() * assignedFlock.obstacleWeight;
+        var arrivalVector = Vector3.zero;
+        var avoidLeaderPathVector = Vector3.zero;
+
+        if (assignedFlock.isLeaderOn)
+        {
+            if (isLeader && assignedFlock.targets.Count != 0) //only when there is targets, there can be a leader
+            {
+                gameObject.GetComponentInChildren<Renderer>().material.color = Color.yellow; //to change color of capsule its needs to be first in hierarchy
+                arrivalVector = CalculateArrivalVector(position) * assignedFlock.arrivalWeight;
+            }
+            else if (assignedFlock.targets.Count != 0) //not leader but target is present
+            {
+                avoidLeaderPathVector = CalculateAvoidLeaderPathVector() * assignedFlock.avoidLeaderPathWeight;
+                gameObject.GetComponentInChildren<Renderer>().material.color = Color.white;
+                arrivalVector = CalculateArrivalVectorBehindLeader() * assignedFlock.arrivalWeight;
+            }
+        }
+        else if (assignedFlock.targets.Count != 0)
+        {
+            arrivalVector = CalculateArrivalVector(position) * assignedFlock.arrivalWeight;
+        }
+
+        var moveVector = Vector3.zero;
+
+        if (speed > 0)
+        {
+            moveVector = cohesionVector + avoidanceVector + aligementVector + boundsVector + obstacleVector + arrivalVector + avoidLeaderPathVector;
+            moveVector = Vector3.SmoothDamp(myTransform.forward, moveVector, ref currentVelocity, smoothDamp);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveVector), smoothDamp);
+            moveVector = moveVector.normalized * speed;
+        }
+        else
+        {
+            arrivalVector = Vector3.SmoothDamp(myTransform.forward, arrivalVector, ref currentVelocity, smoothDamp);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(arrivalVector), smoothDamp);
+        }
+
+
+        //if (moveVector == Vector3.zero)
+        //{
+        //    moveVector = transform.forward;
+        //}
+
+        //myTransform.forward = moveVector;
+        myTransform.position += moveVector * Time.deltaTime;
+
+    }
+
+
     private void FindNeighbours()
     {
         cohesionNeighbours.Clear();
@@ -324,7 +395,7 @@ public class FlockUnit : MonoBehaviour
         }
     }
 
-    private Vector3 CalculateArrivalVector()
+    private Vector3 CalculateArrivalVector(Vector3 position)
     {
         var arrivalVector = Vector3.zero;
 
@@ -333,8 +404,8 @@ public class FlockUnit : MonoBehaviour
 
         if (assignedFlock.targets.Count != 0)
         {
-            arrivalVector = assignedFlock.targets[0].transform.position - myTransform.position;
-            CalculateSlowDownSpeed(assignedFlock.targets[0].transform.position);
+            arrivalVector = position - myTransform.position;
+            CalculateSlowDownSpeed(position);
         }
 
         return arrivalVector.normalized;
@@ -378,7 +449,7 @@ public class FlockUnit : MonoBehaviour
 
         if (dist < assignedFlock.arrivalStopDistance)
         {
-            speed = 0;
+            speed = Mathf.Lerp(speed, 0.0f, 1);
         }
     }
 

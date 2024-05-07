@@ -8,8 +8,13 @@ public class DrawShape : MonoBehaviour
     public int desiredSquares = 25;
     private List<Vector3> points;
 
+    private List<Vector3> _centerPoints;
+    public List<Vector3> centerPoints {  get { return _centerPoints; } }
+
+
     void Start()
     {
+        _centerPoints = new List<Vector3>();
         points = new List<Vector3>();
         lineRenderer.positionCount = 0;
     }
@@ -51,12 +56,12 @@ public class DrawShape : MonoBehaviour
         float avgSquareHeight = height / desiredSquares;
 
         // Estimate center points for each captured point (approximate)
-        List<Vector3> centerPoints = new List<Vector3>();
         for (int i = 0; i < points.Count; i++)
         {
-            Vector3 center = points[i];
-            centerPoints.Add(center);
+            Vector3 center = points[i] + new Vector3(avgSquareWidth / 2f, 0, avgSquareHeight / 2f);
+            _centerPoints.Add(center);
         }
+
 
         //if (Input.GetMouseButton(0))
         //{
