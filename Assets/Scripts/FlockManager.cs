@@ -177,5 +177,43 @@ public class FlockManager : MonoBehaviour
             allUnits[i].MoveUnit(midpoint);
         }
     }
+    public List<Vector3> CalculateVFormationPositions(int flockSize, Vector3 boundingBoxCenter, Vector2 boundingBoxSize, float vAngle)
+    {
+        // Calculate number of squares per side
+        int squaresPerSide = Mathf.CeilToInt(Mathf.Sqrt(flockSize));
+
+        // Calculate size of each square
+        float squareSize = boundingBoxSize.x / squaresPerSide;
+
+        // Calculate V-formation offset
+        float vBaseOffset = boundingBoxSize.x * Mathf.Tan(Mathf.Deg2Rad * vAngle / 2) / 2;
+
+        // List to store midpoint positions
+        List<Vector3> positions = new List<Vector3>();
+
+        for (int i = 0; i < squaresPerSide; i++)
+        {
+            for (int j = 0; j < squaresPerSide; j++)
+            {
+                // Calculate center position of the square
+                float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
+                float centerY = boundingBoxCenter.y + (j + 0.5f) * squareSize;
+
+                // Adjust for V-formation offset based on row index
+                if (i % 2 == 0)
+                {
+                    centerX -= vBaseOffset;
+                }
+                else
+                {
+                    centerX += vBaseOffset;
+                }
+
+                positions.Add(new Vector3(centerX, 0f, centerY));
+            }
+        }
+
+        return positions;
+    }
 
 }
