@@ -173,7 +173,7 @@ public class FlockManager : MonoBehaviour
 
     private void FormShape()
     {
-        Vector2 boundBoxSize = new Vector2(boundingBoxSize+transform.position.x, boundingBoxSize + transform.position.y);
+        Vector2 boundBoxSize = new Vector2(boundingBoxSize, boundingBoxSize);
         List<Vector3> midpoints = CalculateVFormationPositions(flockSize, transform.position, boundBoxSize, angle);
         Debug.Log(midpoints.Count);
         for(int i = 0; i < midpoints.Count; i++) {
@@ -203,10 +203,14 @@ public class FlockManager : MonoBehaviour
                 {
                     float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
                     float centerZ = boundingBoxCenter.y + (j + 0.5f) * squareSize;
-                    Debug.DrawLine(boundingBoxCenter, new Vector3(centerX, 0f, centerZ - vBaseOffset * offset), Color.red, 0.5f); // Draw line from center to midpoint
-                    Debug.DrawLine(boundingBoxCenter, new Vector3(centerX, 0f, -centerZ + vBaseOffset * offset), Color.blue, 0.5f); // Draw line from center to midpoint
-                    positions.Add(new Vector3(centerX, 0f, centerZ - vBaseOffset*offset)); // Set y to 0 for 2D or maintain y position for 3D
-                    positions.Add(new Vector3(centerX, 0f, -centerZ + vBaseOffset*offset)); // Set y to 0 for 2D or maintain y position for 3D
+                    
+                    Vector3 left = new Vector3(centerX , 0f, centerZ + transform.localPosition.z - vBaseOffset * offset);
+                    Vector3 right = new Vector3(centerX, 0f, -centerZ + transform.localPosition.z + vBaseOffset * offset);
+
+                    Debug.DrawLine(boundingBoxCenter, left, Color.red, 0.5f); // Draw line from center to midpoint
+                    Debug.DrawLine(boundingBoxCenter, right, Color.blue, 0.5f); // Draw line from center to midpoint
+                    positions.Add(left); // Set y to 0 for 2D or maintain y position for 3D
+                    positions.Add(right); // Set y to 0 for 2D or maintain y position for 3D
                     
 
                 }
