@@ -1,11 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Net;
 
 public class FlockManager : MonoBehaviour
 {
     [Header("Spawn Setup")]
     [SerializeField] private FlockUnit flockUnitPrefab;
-    [SerializeField] private int flockSize;
+    [SerializeField] public int flockSize;
     [SerializeField] private Vector3 spawnBounds;
 
     [Header("Speed Setup")]
@@ -90,8 +91,9 @@ public class FlockManager : MonoBehaviour
 
     public DrawShape drawShape;
     public bool formShape;
+    [Range(0, 1)]
     public float angle;
-    public Vector2 boxSize;
+    public float boundingBoxSize;
 
     public FlockUnit[] allUnits { get; set; }
 
@@ -116,6 +118,7 @@ public class FlockManager : MonoBehaviour
 
 
         DrawBox(transform.localScale, Quaternion.identity, spawnBounds, Color.red);
+        //transform.position += Vector3.right*Time.deltaTime;
     }
 
     private void GenerateUnits()
@@ -170,7 +173,7 @@ public class FlockManager : MonoBehaviour
 
     private void FormShape()
     {
-        Vector2 boundBoxSize = boxSize;
+        Vector2 boundBoxSize = new Vector2(boundingBoxSize+transform.position.x, boundingBoxSize + transform.position.y);
         List<Vector3> midpoints = CalculateVFormationPositions(flockSize, transform.position, boundBoxSize, angle);
         Debug.Log(midpoints.Count);
         for(int i = 0; i < midpoints.Count; i++) {
@@ -181,37 +184,35 @@ public class FlockManager : MonoBehaviour
     public List<Vector3> CalculateVFormationPositions(int size, Vector3 boundingBoxCenter, Vector2 boundingBoxSize, float vAngle)
     {
         // Calculate number of squares per side
-        int squaresPerSide = (int)Mathf.Sqrt(size);
+        int squaresPerSide = size/2;
         // Calculate size of each square
         float squareSize = boundingBoxSize.x / squaresPerSide;
 
         // Calculate V-formation offset
-        //float vBaseOffset = boundingBoxSize.x * Mathf.Tan(Mathf.Deg2Rad * vAngle / 2) / 2;
-
+        //float vBaseOffset = boundingBoxSize.x * Mathf.Tan(Mathf.Deg2Rad * vAngle/2)/2;
+        float vBaseOffset = vAngle/2;
+        float offset = 0f;
         // List to store midpoint positions
         List<Vector3> positions = new List<Vector3>();
-
-
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < squaresPerSide; i++)
         {
-            for (int j = 0; j < size; j++)
+            for (int j = 0; j < squaresPerSide; j++)
             {
                 // Calculate center position of the square
                 if (i == j)
                 {
                     float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
                     float centerZ = boundingBoxCenter.y + (j + 0.5f) * squareSize;
-                    //Debug.DrawLine(boundingBoxCenter, new Vector3(centerX, 0f, centerZ), Color.red, 0.5f); // Draw line from center to midpoint
-                    positions.Add(new Vector3(centerX, 0f, centerZ)); // Set y to 0 for 2D or maintain y position for 3D
-                    positions.Add(new Vector3(centerX, 0f, -centerZ)); // Set y to 0 for 2D or maintain y position for 3D
-                }
-                else
-                {
+                    Debug.DrawLine(boundingBoxCenter, new Vector3(centerX, 0f, centerZ - vBaseOffset * offset), Color.red, 0.5f); // Draw line from center to midpoint
+                    Debug.DrawLine(boundingBoxCenter, new Vector3(centerX, 0f, -centerZ + vBaseOffset * offset), Color.blue, 0.5f); // Draw line from center to midpoint
+                    positions.Add(new Vector3(centerX, 0f, centerZ - vBaseOffset*offset)); // Set y to 0 for 2D or maintain y position for 3D
+                    positions.Add(new Vector3(centerX, 0f, -centerZ + vBaseOffset*offset)); // Set y to 0 for 2D or maintain y position for 3D
                     
+
                 }
                 //float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
                 //float centerZ = boundingBoxCenter.y + (j + 0.5f) * squareSize;
-                
+
 
 
                 // Adjust for V-formation offset based on row index
@@ -227,6 +228,7 @@ public class FlockManager : MonoBehaviour
                 //}
 
             }
+            offset += (squareSize/squaresPerSide)*100;
         }
 
         return positions;

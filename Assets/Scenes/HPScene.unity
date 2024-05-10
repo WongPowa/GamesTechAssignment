@@ -678,7 +678,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flockUnitPrefab: {fileID: 2941041112776217607, guid: 10eda4decf35c3e469784d9af3c14219, type: 3}
-  flockSize: 25
+  flockSize: 100
   spawnBounds: {x: 10, y: 0, z: 10}
   _minSpeed: 2
   _maxSpeed: 5
@@ -705,8 +705,8 @@ MonoBehaviour:
   timeToLeader: 5
   drawShape: {fileID: 162756048}
   formShape: 1
-  angle: 30
-  boxSize: {x: 15, y: 15}
+  angle: 0
+  boundingBoxSize: 25
 --- !u!4 &691228646
 Transform:
   m_ObjectHideFlags: 0
