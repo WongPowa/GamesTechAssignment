@@ -183,34 +183,49 @@ public class FlockManager : MonoBehaviour
         // Calculate number of squares per side
         int squaresPerSide = (int)Mathf.Sqrt(size);
         // Calculate size of each square
-        float squareSize = boundingBoxSize.y / squaresPerSide;
+        float squareSize = boundingBoxSize.x / squaresPerSide;
 
         // Calculate V-formation offset
-        float vBaseOffset = boundingBoxSize.y * Mathf.Tan(Mathf.Deg2Rad * vAngle / 2) / 2;
+        //float vBaseOffset = boundingBoxSize.x * Mathf.Tan(Mathf.Deg2Rad * vAngle / 2) / 2;
 
         // List to store midpoint positions
         List<Vector3> positions = new List<Vector3>();
 
-        for (int i = 0; i < squaresPerSide; i++)
+
+        for (int i = 0; i < size; i++)
         {
-            for (int j = 0; j < squaresPerSide; j++)
+            for (int j = 0; j < size; j++)
             {
                 // Calculate center position of the square
-                float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
-                float centerZ = boundingBoxCenter.y + (j + 0.5f) * squareSize;
-
-                // Adjust for V-formation offset based on row index
-                if (i % 2 == 0)
+                if (i == j)
                 {
-                    centerZ -= vBaseOffset;
+                    float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
+                    float centerZ = boundingBoxCenter.y + (j + 0.5f) * squareSize;
+                    //Debug.DrawLine(boundingBoxCenter, new Vector3(centerX, 0f, centerZ), Color.red, 0.5f); // Draw line from center to midpoint
+                    positions.Add(new Vector3(centerX, 0f, centerZ)); // Set y to 0 for 2D or maintain y position for 3D
+                    positions.Add(new Vector3(centerX, 0f, -centerZ)); // Set y to 0 for 2D or maintain y position for 3D
                 }
                 else
                 {
-                    centerZ += vBaseOffset;
+                    
                 }
-                Debug.DrawLine(boundingBoxCenter, new Vector3(centerX, 0f, centerZ), Color.red, 0.5f); // Draw line from center to midpoint
+                //float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
+                //float centerZ = boundingBoxCenter.y + (j + 0.5f) * squareSize;
+                
 
-                positions.Add(new Vector3(centerX, 0f, centerZ)); // Set y to 0 for 2D or maintain y position for 3D
+
+                // Adjust for V-formation offset based on row index
+                //centerX += (i % 2 == 0) ? vBaseOffset : -vBaseOffset;
+                //centerZ += (j % 2 == 0) ? -vBaseOffset : vBaseOffset;
+                //if (i % 2 == 0)
+                //{
+                //    centerZ -= vBaseOffset;
+                //}
+                //else
+                //{
+                //    centerZ += vBaseOffset;
+                //}
+
             }
         }
 

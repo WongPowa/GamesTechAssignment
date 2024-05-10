@@ -705,8 +705,8 @@ MonoBehaviour:
   timeToLeader: 5
   drawShape: {fileID: 162756048}
   formShape: 1
-  angle: 45
-  boxSize: {x: 0, y: 0}
+  angle: 30
+  boxSize: {x: 15, y: 15}
 --- !u!4 &691228646
 Transform:
   m_ObjectHideFlags: 0
