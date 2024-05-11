@@ -143,12 +143,13 @@ public class FlockUnit : MonoBehaviour
                 arrivalVector = CalculateArrivalVectorBehindLeader() * assignedFlock.arrivalWeight;
             }
         }
-        else if (assignedFlock.targets.Count != 0)
+        else 
         {
             arrivalVector = CalculateArrivalVector(position) * assignedFlock.arrivalWeight;
         }
 
         var moveVector = Vector3.zero;
+
 
         if (speed > 0)
         {
@@ -241,7 +242,13 @@ public class FlockUnit : MonoBehaviour
         if (neighboursInFOV > 0)
         {
             cohesionVector /= neighboursInFOV;
-            cohesionVector -= myTransform.position;
+            if (Mathf.Approximately(cohesionVector.y, myTransform.position.y))
+            {
+                cohesionVector = Vector3.zero;
+            } else
+            {
+                cohesionVector = cohesionVector - myTransform.position;
+            }
             cohesionVector = cohesionVector.normalized;
         }
 
@@ -400,14 +407,17 @@ public class FlockUnit : MonoBehaviour
     {
         var arrivalVector = Vector3.zero;
 
-        if (assignedFlock.targets.Count == 0)
+        if (Vector3.Distance(position, Vector3.zero) == 0)
             return Vector3.zero;
 
-        if (assignedFlock.targets.Count != 0)
-        {
-            arrivalVector = position - myTransform.position;
-            CalculateSlowDownSpeed(position);
-        }
+        Debug.Log("Position" + position.y);
+        Debug.Log("myTransform" + myTransform.position.y);
+
+        arrivalVector = position - myTransform.position;
+
+
+        CalculateSlowDownSpeed(position);
+        
 
         return arrivalVector.normalized;
     } 

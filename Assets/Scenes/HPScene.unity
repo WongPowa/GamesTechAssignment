@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748171, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -392,16 +392,15 @@ MonoBehaviour:
   _leaderDistance: 5
   _arrivalSlowDistance: 5
   _arrivalStopDistance: 0.01
-  _cohesionWeight: 2
-  _avoidanceWeight: 8
-  _aligementWeight: 7
+  _cohesionWeight: 0
+  _avoidanceWeight: 5
+  _aligementWeight: 5
   _obstacleWeight: 5
   _boundsWeight: 5
   _arrivalWeight: 10
   _avoidLeaderPathWeight: 5
   isLeaderOn: 0
-  targets:
-  - {fileID: 777226467}
+  targets: []
   positionToFollow: {x: 0, y: 0, z: -1}
   objectSpawnPosition: {x: 0, y: 0, z: 10}
   timeToLeader: 5
@@ -558,11 +557,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 761599153}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &777226467 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 892074310965143447, guid: 4959f63716640a94a86d08944bc2f7b4, type: 3}
-  m_PrefabInstance: {fileID: 2003352015238903140}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1117700562
 GameObject:
   m_ObjectHideFlags: 0
@@ -1109,7 +1103,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!135 &1468693266
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1507,6 +1501,10 @@ PrefabInstance:
     - target: {fileID: 892074310965143447, guid: 4959f63716640a94a86d08944bc2f7b4, type: 3}
       propertyPath: m_Name
       value: Target
+      objectReference: {fileID: 0}
+    - target: {fileID: 892074310965143447, guid: 4959f63716640a94a86d08944bc2f7b4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8347515199682122834, guid: 4959f63716640a94a86d08944bc2f7b4, type: 3}
       propertyPath: m_LocalPosition.x

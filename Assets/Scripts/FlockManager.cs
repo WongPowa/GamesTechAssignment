@@ -127,7 +127,7 @@ public class FlockManager : MonoBehaviour
 
 
 
-        DrawBox(transform.localScale, Quaternion.identity, spawnBounds, Color.red);
+        DrawBox(transform.position, Quaternion.identity, spawnBounds, Color.red);
         //transform.position += Vector3.right*Time.deltaTime;
     }
 
@@ -185,7 +185,6 @@ public class FlockManager : MonoBehaviour
     {
         Vector2 boundBoxSize = new Vector2(vBoundingBoxSize, vBoundingBoxSize);
         List<Vector3> midpoints = CalculateVFormationPositions(flockSize, transform.position, boundBoxSize, angle);
-        Debug.Log(midpoints.Count);
         for(int i = 0; i < midpoints.Count; i++) {
             Vector3 midpoint = midpoints[i];
             allUnits[i].MoveUnit(midpoint);
@@ -195,7 +194,6 @@ public class FlockManager : MonoBehaviour
     {
         Vector2 boundBoxSize = new Vector2(squareBoundingBoxSize, squareBoundingBoxSize);
         List<Vector3> midpoints = CalculateSquareFormationPositions(flockSize, transform.position, boundBoxSize);
-        Debug.Log(midpoints.Count);
         for(int i = 0; i < midpoints.Count; i++) {
             Vector3 midpoint = midpoints[i];
             allUnits[i].MoveUnit(midpoint);
