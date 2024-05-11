@@ -226,10 +226,10 @@ public class FlockManager : MonoBehaviour
                     Vector3 left = new Vector3(centerX , 0f, centerZ + transform.localPosition.z - vBaseOffset * offset);
                     Vector3 right = new Vector3(centerX, 0f, -centerZ + transform.localPosition.z + vBaseOffset * offset);
 
-                    Debug.DrawLine(boundingBoxCenter, left, Color.red, 0.5f); // Draw line from center to midpoint
-                    Debug.DrawLine(boundingBoxCenter, right, Color.blue, 0.5f); // Draw line from center to midpoint
-                    positions.Add(left); // Set y to 0 for 2D or maintain y position for 3D
-                    positions.Add(right); // Set y to 0 for 2D or maintain y position for 3D
+                    Debug.DrawLine(boundingBoxCenter, transform.TransformDirection(left), Color.red, 0.5f); // Draw line from center to midpoint
+                    Debug.DrawLine(boundingBoxCenter, transform.TransformDirection(right), Color.blue, 0.5f); // Draw line from center to midpoint
+                    positions.Add(transform.TransformDirection(left)); // Set y to 0 for 2D or maintain y position for 3D
+                    positions.Add(transform.TransformDirection(right)); // Set y to 0 for 2D or maintain y position for 3D
                     
 
                 }
@@ -276,9 +276,9 @@ public class FlockManager : MonoBehaviour
 
                 Vector3 midpoint = new Vector3(centerX, 0f, centerZ+ transform.localPosition.z);
 
-                    Debug.DrawLine(boundingBoxCenter, midpoint, Color.red, 0.5f); // Draw line from center to midpoint
+                Debug.DrawLine(boundingBoxCenter, transform.TransformDirection(midpoint), Color.red, 0.5f); // Draw line from center to midpoint
                     
-                    positions.Add(midpoint); // Set y to 0 for 2D or maintain y position for 3D
+                positions.Add(transform.TransformDirection(midpoint)); // Set y to 0 for 2D or maintain y position for 3D
                     
 
             }

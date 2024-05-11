@@ -704,9 +704,11 @@ MonoBehaviour:
   objectSpawnPosition: {x: 0, y: 0, z: 10}
   timeToLeader: 5
   drawShape: {fileID: 162756048}
-  formShape: 1
-  angle: 0
-  boundingBoxSize: 15
+  formVShape: 1
+  angle: 0.06
+  vBoundingBoxSize: 15
+  formSquareShape: 0
+  squareBoundingBoxSize: 15
 --- !u!4 &691228646
 Transform:
   m_ObjectHideFlags: 0
