@@ -90,11 +90,15 @@ public class FlockManager : MonoBehaviour
     public int timeToLeader;
 
     public DrawShape drawShape;
-    public bool formShape;
+    [Header("V Formation")]
+    public bool formVShape;
+    
     [Range(0, 1)]
     public float angle;
-    public float boundingBoxSize;
-
+    public float vBoundingBoxSize;
+    [Header("Square Formation")]
+    public bool formSquareShape;
+    public float squareBoundingBoxSize;
     public FlockUnit[] allUnits { get; set; }
 
     private void Start()
@@ -104,10 +108,15 @@ public class FlockManager : MonoBehaviour
 
     private void Update()
     {
-        if (formShape)
+        if (formVShape)
         {
-            FormShape();
-        } else
+            FormVShape();
+        } 
+        else if (formSquareShape)
+        {
+            FormSquareShape();
+        } 
+        else
         {
             for (int i = 0; i < allUnits.Length; i++)
             {
@@ -171,10 +180,20 @@ public class FlockManager : MonoBehaviour
         Debug.DrawLine(point4, point8, c);
     }
 
-    private void FormShape()
+    private void FormVShape()
     {
-        Vector2 boundBoxSize = new Vector2(boundingBoxSize, boundingBoxSize);
+        Vector2 boundBoxSize = new Vector2(vBoundingBoxSize, vBoundingBoxSize);
         List<Vector3> midpoints = CalculateVFormationPositions(flockSize, transform.position, boundBoxSize, angle);
+        Debug.Log(midpoints.Count);
+        for(int i = 0; i < midpoints.Count; i++) {
+            Vector3 midpoint = midpoints[i];
+            allUnits[i].MoveUnit(midpoint);
+        }
+    }
+    private void FormSquareShape()
+    {
+        Vector2 boundBoxSize = new Vector2(squareBoundingBoxSize, squareBoundingBoxSize);
+        List<Vector3> midpoints = CalculateSquareFormationPositions(flockSize, transform.position, boundBoxSize);
         Debug.Log(midpoints.Count);
         for(int i = 0; i < midpoints.Count; i++) {
             Vector3 midpoint = midpoints[i];
@@ -233,6 +252,37 @@ public class FlockManager : MonoBehaviour
 
             }
             offset += (squareSize/squaresPerSide)*100;
+        }
+
+        return positions;
+    }
+    public List<Vector3> CalculateSquareFormationPositions(int size, Vector3 boundingBoxCenter, Vector2 boundingBoxSize)
+    {
+        // Calculate number of squares per side
+        int squaresPerSide = (int)Mathf.Sqrt(size);
+        // Calculate size of each square
+        float squareSize = boundingBoxSize.x / squaresPerSide;
+
+        // List to store midpoint positions
+        List<Vector3> positions = new List<Vector3>();
+        for (int i = 0; i < squaresPerSide; i++)
+        {
+            for (int j = 0; j < squaresPerSide; j++)
+            {
+                // Calculate center position of the square
+
+                float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
+                float centerZ = boundingBoxCenter.y + (j + 0.5f) * squareSize;
+
+                Vector3 midpoint = new Vector3(centerX, 0f, centerZ+ transform.localPosition.z);
+
+                    Debug.DrawLine(boundingBoxCenter, midpoint, Color.red, 0.5f); // Draw line from center to midpoint
+                    
+                    positions.Add(midpoint); // Set y to 0 for 2D or maintain y position for 3D
+                    
+
+            }
+           
         }
 
         return positions;
