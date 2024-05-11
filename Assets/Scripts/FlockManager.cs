@@ -89,7 +89,6 @@ public class FlockManager : MonoBehaviour
     public Vector3 objectSpawnPosition;
     public int timeToLeader;
 
-    public DrawShape drawShape;
     [Header("V Formation")]
     public bool formVShape;
     
@@ -108,8 +107,10 @@ public class FlockManager : MonoBehaviour
 
     private void Update()
     {
+      
         if (formVShape)
         {
+            
             FormVShape();
         } 
         else if (formSquareShape)

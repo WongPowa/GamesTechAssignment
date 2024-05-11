@@ -215,7 +215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53962e4d882f9cb44863ba25a7a2fda9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FOVAngle: 180
+  FOVAngle: 200
   smoothDamp: 1
   obstacleMask:
     serializedVersion: 2
@@ -226,12 +226,12 @@ MonoBehaviour:
   directionsToCheckWhenAvoidingObstacles:
   - {x: 1, y: 0, z: 0}
   - {x: -1, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
-  - {x: 0, y: 0, z: -1}
+  - {x: 0, y: 1, z: 0}
+  - {x: 0, y: -1, z: 0}
   isLeader: 0
   inFrontOfLeader: 0
   positionToAvoid: {x: 0, y: 0, z: 0}
-  objectInFrontOfLeader: {fileID: 7140485013239744812}
+  objectInFrontOfLeader: {fileID: 3514955659342546260, guid: f8dd5324cd3660d47bd5e82e626bc848, type: 3}
 --- !u!136 &295904971106122458
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -426,10 +426,5 @@ PrefabInstance:
 --- !u!4 &4705856779901047148 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1337911081328631060, guid: f8dd5324cd3660d47bd5e82e626bc848, type: 3}
-  m_PrefabInstance: {fileID: 6043752382116613240}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &7140485013239744812 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3514955659342546260, guid: f8dd5324cd3660d47bd5e82e626bc848, type: 3}
   m_PrefabInstance: {fileID: 6043752382116613240}
   m_PrefabAsset: {fileID: 0}
