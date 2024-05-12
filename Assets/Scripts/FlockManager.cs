@@ -28,8 +28,8 @@ public class FlockManager : MonoBehaviour
     public float avoidanceDistance { get { return _avoidanceDistance; } }
 
     [Range(0, 10)]
-    [SerializeField] private float _aligementDistance;
-    public float aligementDistance { get { return _aligementDistance; } }
+    [SerializeField] private float _alignmentDistance;
+    public float alignmentDistance { get { return _alignmentDistance; } }
 
     [Range(0, 10)]
     [SerializeField] private float _obstacleDistance;
@@ -63,8 +63,8 @@ public class FlockManager : MonoBehaviour
     public float avoidanceWeight { get { return _avoidanceWeight; } }
 
     [Range(0, 10)]
-    [SerializeField] private float _aligementWeight;
-    public float aligementWeight { get { return _aligementWeight; } }
+    [SerializeField] private float _alignmentWeight;
+    public float alignmentWeight { get { return _alignmentWeight; } }
 
     [Range(0, 10)]
     [SerializeField] private float _obstacleWeight;
@@ -91,7 +91,7 @@ public class FlockManager : MonoBehaviour
 
     [Header("V Formation")]
     public bool formVShape;
-    
+
     [Range(0, 1)]
     public float angle;
     public float vBoundingBoxSize;
@@ -107,16 +107,16 @@ public class FlockManager : MonoBehaviour
 
     private void Update()
     {
-      
+
         if (formVShape)
         {
-            
+
             FormVShape();
-        } 
+        }
         else if (formSquareShape)
         {
             FormSquareShape();
-        } 
+        }
         else
         {
             for (int i = 0; i < allUnits.Length; i++)
@@ -147,7 +147,7 @@ public class FlockManager : MonoBehaviour
             allUnits[i].AssignFlock(this);
             allUnits[i].InitializeSpeed(UnityEngine.Random.Range(minSpeed, maxSpeed));
         }
-    }    
+    }
 
     public void DrawBox(Vector3 pos, Quaternion rot, Vector3 scale, Color c)
     {
@@ -185,7 +185,8 @@ public class FlockManager : MonoBehaviour
     {
         Vector2 boundBoxSize = new Vector2(vBoundingBoxSize, vBoundingBoxSize);
         List<Vector3> midpoints = CalculateVFormationPositions(flockSize, transform.localPosition, boundBoxSize, angle);
-        for(int i = 0; i < midpoints.Count; i++) {
+        for (int i = 0; i < midpoints.Count; i++)
+        {
             Vector3 midpoint = midpoints[i];
             allUnits[i].MoveUnit(midpoint);
         }
@@ -194,7 +195,8 @@ public class FlockManager : MonoBehaviour
     {
         Vector2 boundBoxSize = new Vector2(squareBoundingBoxSize, squareBoundingBoxSize);
         List<Vector3> midpoints = CalculateSquareFormationPositions(flockSize, transform.position, boundBoxSize);
-        for(int i = 0; i < midpoints.Count; i++) {
+        for (int i = 0; i < midpoints.Count; i++)
+        {
             Vector3 midpoint = midpoints[i];
             allUnits[i].MoveUnit(midpoint);
         }
@@ -202,43 +204,44 @@ public class FlockManager : MonoBehaviour
     public List<Vector3> CalculateVFormationPositions(int size, Vector3 boundingBoxCenter, Vector2 boundingBoxSize, float vAngle)
     {
         // Calculate number of squares per side
-        int squaresPerSide = size/2;
+        int squaresPerSide = size / 2;
         // Calculate size of each square
         float squareSize = boundingBoxSize.x / squaresPerSide;
 
         // Calculate V-formation offset
         //float vBaseOffset = boundingBoxSize.x * Mathf.Tan(Mathf.Deg2Rad * vAngle/2)/2;
-        float vBaseOffset = vAngle/2;
+        float vBaseOffset = vAngle / 2;
         float offset = 0f;
         // List to store midpoint positions
         List<Vector3> positions = new List<Vector3>();
+
         Quaternion rotation = transform.rotation;
+
         for (int i = 0; i < squaresPerSide; i++)
         {
             for (int j = 0; j < squaresPerSide; j++)
             {
-                
-                    if (i == j)
-                    {
-                        float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
-                        float centerZ = boundingBoxCenter.z + (j + 0.5f) * squareSize;
+                if (i == j)
+                {
+                    float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
+                    float centerZ = boundingBoxCenter.z + (j + 0.5f) * squareSize;
 
-                        Vector3 left = new Vector3(centerX, 0f, centerZ  - vBaseOffset * offset);
-                        Vector3 right = new Vector3(centerX, 0f, -centerZ  + vBaseOffset * offset);
+                    Vector3 left = new Vector3(centerX, 0f, centerZ - vBaseOffset * offset);
+                    Vector3 right = new Vector3(centerX, 0f, -centerZ + vBaseOffset * offset);
                     left = rotation * left;
                     right = rotation * right;
-                    Debug.DrawLine(boundingBoxCenter, transform.TransformPoint(left), Color.red, 0.5f); // Draw line from center to midpoint
-                    Debug.DrawLine(boundingBoxCenter, transform.TransformPoint(right), Color.blue, 0.5f); // Draw line from center to midpoint
-                    positions.Add(transform.TransformPoint(left)); // Set y to 0 for 2D or maintain y position for 3D
-                    positions.Add(transform.TransformPoint(right)); // Set y to 0 for 2D or maintain y position for 3D
+                    left = transform.TransformPoint(left);
+                    right = transform.TransformPoint(right);
+                    Debug.DrawLine(transform.position, left, Color.red, 0.5f); // Draw line from center to midpoint
+                    Debug.DrawLine(transform.position, right, Color.blue, 0.5f); // Draw line from center to midpoint
+                    positions.Add(left); // Set y to 0 for 2D or maintain y position for 3D
+                    positions.Add(right); // Set y to 0 for 2D or maintain y position for 3D
 
 
                 }
 
-                
-
             }
-            offset += (squareSize/squaresPerSide)*100;
+            offset += (squareSize / squaresPerSide) * 100;
         }
 
         return positions;
@@ -261,15 +264,15 @@ public class FlockManager : MonoBehaviour
                 float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
                 float centerZ = boundingBoxCenter.z + (j + 0.5f) * squareSize;
 
-                Vector3 midpoint = new Vector3(centerX, 0f, centerZ+transform.localPosition.z);
+                Vector3 midpoint = new Vector3(centerX, 0f, centerZ + transform.localPosition.z);
 
                 Debug.DrawLine(boundingBoxCenter, transform.TransformDirection(midpoint), Color.red, 0.5f); // Draw line from center to midpoint
-                    
+
                 positions.Add(transform.TransformDirection(midpoint)); // Set y to 0 for 2D or maintain y position for 3D
-                    
+
 
             }
-           
+
         }
 
         return positions;

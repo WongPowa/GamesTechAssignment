@@ -16,7 +16,7 @@ public class FlockUnit : MonoBehaviour
 
     private List<FlockUnit> cohesionNeighbours = new List<FlockUnit>();
     private List<FlockUnit> avoidanceNeighbours = new List<FlockUnit>();
-    private List<FlockUnit> aligementNeighbours = new List<FlockUnit>();
+    private List<FlockUnit> alignmentNeighbours = new List<FlockUnit>();
     private List<FlockUnit> leaderNeighbours = new List<FlockUnit>();
     private FlockManager assignedFlock;
     private Vector3 currentVelocity;
@@ -64,7 +64,7 @@ public class FlockUnit : MonoBehaviour
 
         var cohesionVector = CalculateCohesionVector() * assignedFlock.cohesionWeight;
         var avoidanceVector = CalculateAvoidanceVector() * assignedFlock.avoidanceWeight;
-        var aligementVector = CalculateAligementVector() * assignedFlock.aligementWeight;
+        var alignmentVector = CalculatealignmentVector() * assignedFlock.alignmentWeight;
         var boundsVector = CalculateBoundsVector() * assignedFlock.boundsWeight;
         var obstacleVector = CalculateObstacleVector() * assignedFlock.obstacleWeight;
         var arrivalVector = Vector3.zero;
@@ -92,7 +92,7 @@ public class FlockUnit : MonoBehaviour
 
         if (speed > 0)
         {
-            moveVector = cohesionVector + avoidanceVector + aligementVector + boundsVector + obstacleVector + arrivalVector + avoidLeaderPathVector;
+            moveVector = cohesionVector + avoidanceVector + alignmentVector + boundsVector + obstacleVector + arrivalVector + avoidLeaderPathVector;
             moveVector = Vector3.SmoothDamp(myTransform.forward, moveVector, ref currentVelocity, smoothDamp);
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveVector), smoothDamp);
             moveVector = moveVector.normalized * speed;
@@ -123,7 +123,7 @@ public class FlockUnit : MonoBehaviour
 
         var cohesionVector = CalculateCohesionVector() * assignedFlock.cohesionWeight;
         var avoidanceVector = CalculateAvoidanceVector() * assignedFlock.avoidanceWeight;
-        var aligementVector = CalculateAligementVector() * assignedFlock.aligementWeight;
+        var alignmentVector = CalculatealignmentVector() * assignedFlock.alignmentWeight;
         var boundsVector = CalculateBoundsVector() * assignedFlock.boundsWeight;
         var obstacleVector = CalculateObstacleVector() * assignedFlock.obstacleWeight;
         var arrivalVector = Vector3.zero;
@@ -153,7 +153,7 @@ public class FlockUnit : MonoBehaviour
 
         if (speed > 0)
         {
-            moveVector = cohesionVector + avoidanceVector + aligementVector + boundsVector + obstacleVector + arrivalVector + avoidLeaderPathVector;
+            moveVector = cohesionVector + avoidanceVector + alignmentVector + boundsVector + obstacleVector + arrivalVector + avoidLeaderPathVector;
             moveVector = Vector3.SmoothDamp(myTransform.forward, moveVector, ref currentVelocity, smoothDamp);
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveVector), smoothDamp);
             moveVector = moveVector.normalized * speed;
@@ -180,7 +180,7 @@ public class FlockUnit : MonoBehaviour
     {
         cohesionNeighbours.Clear();
         avoidanceNeighbours.Clear();
-        aligementNeighbours.Clear();
+        alignmentNeighbours.Clear();
         leaderNeighbours.Clear();
 
         var allUnits = assignedFlock.allUnits;
@@ -198,9 +198,9 @@ public class FlockUnit : MonoBehaviour
                 {
                     avoidanceNeighbours.Add(currentUnit);
                 }
-                if (currentNeighbourDistanceSqr <= assignedFlock.aligementDistance * assignedFlock.aligementDistance)
+                if (currentNeighbourDistanceSqr <= assignedFlock.alignmentDistance * assignedFlock.alignmentDistance)
                 {
-                    aligementNeighbours.Add(currentUnit);
+                    alignmentNeighbours.Add(currentUnit);
                 }
                 if (currentNeighbourDistanceSqr <= assignedFlock.leaderDistance * assignedFlock.leaderDistance && assignedFlock.isLeaderOn)
                 {
@@ -255,34 +255,34 @@ public class FlockUnit : MonoBehaviour
         return cohesionVector;
     }
 
-    private Vector3 CalculateAligementVector()
+    private Vector3 CalculatealignmentVector()
     {
-        var aligementVector = myTransform.forward;
-        if (aligementNeighbours.Count == 0)
+        var alignmentVector = myTransform.forward;
+        if (alignmentNeighbours.Count == 0)
             return myTransform.forward;
         int neighboursInFOV = 0;
-        for (int i = 0; i < aligementNeighbours.Count; i++)
+        for (int i = 0; i < alignmentNeighbours.Count; i++)
         {
-            if (IsInFOV(aligementNeighbours[i].myTransform.position))
+            if (IsInFOV(alignmentNeighbours[i].myTransform.position))
             {
                 neighboursInFOV++;
-                aligementVector += aligementNeighbours[i].myTransform.forward;
+                alignmentVector += alignmentNeighbours[i].myTransform.forward;
             }
         }
 
         if (neighboursInFOV > 0)
         {
-            aligementVector /= neighboursInFOV;
+            alignmentVector /= neighboursInFOV;
         }
 
-        aligementVector = aligementVector.normalized;
-        return aligementVector;
+        alignmentVector = alignmentVector.normalized;
+        return alignmentVector;
     }
 
     private Vector3 CalculateAvoidanceVector()
     {
         var avoidanceVector = Vector3.zero;
-        if (aligementNeighbours.Count == 0)
+        if (alignmentNeighbours.Count == 0)
             return Vector3.zero;
         int neighboursInFOV = 0;
         for (int i = 0; i < avoidanceNeighbours.Count; i++)
