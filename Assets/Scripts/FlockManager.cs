@@ -216,38 +216,24 @@ public class FlockManager : MonoBehaviour
         {
             for (int j = 0; j < squaresPerSide; j++)
             {
-                // Calculate center position of the square
-                if (i == j)
-                {
-                    float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
-                    float centerZ = boundingBoxCenter.y + (j + 0.5f) * squareSize;
-                    
-                    Vector3 left = new Vector3(centerX , 0f, centerZ + transform.localPosition.z - vBaseOffset * offset);
-                    Vector3 right = new Vector3(centerX, 0f, -centerZ + transform.localPosition.z + vBaseOffset * offset);
+                
+                    if (i == j)
+                    {
+                        float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
+                        float centerZ = boundingBoxCenter.z + (i + 0.5f) * squareSize;
 
-                    Debug.DrawLine(boundingBoxCenter, transform.TransformDirection(left), Color.red, 0.5f); // Draw line from center to midpoint
-                    Debug.DrawLine(boundingBoxCenter, transform.TransformDirection(right), Color.blue, 0.5f); // Draw line from center to midpoint
-                    positions.Add(transform.TransformDirection(left)); // Set y to 0 for 2D or maintain y position for 3D
-                    positions.Add(transform.TransformDirection(right)); // Set y to 0 for 2D or maintain y position for 3D
-                    
+                        Vector3 left = new Vector3(centerX, 0f, centerZ  - vBaseOffset * offset);
+                        Vector3 right = new Vector3(centerX, 0f, -centerZ  + vBaseOffset * offset);
 
-                }
-                //float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
-                //float centerZ = boundingBoxCenter.y + (j + 0.5f) * squareSize;
+                        Debug.DrawLine(boundingBoxCenter, transform.TransformDirection(left), Color.red, 0.5f); // Draw line from center to midpoint
+                        Debug.DrawLine(boundingBoxCenter, transform.TransformDirection(right), Color.blue, 0.5f); // Draw line from center to midpoint
+                        positions.Add(transform.TransformDirection(left)); // Set y to 0 for 2D or maintain y position for 3D
+                        positions.Add(transform.TransformDirection(right)); // Set y to 0 for 2D or maintain y position for 3D
 
 
+                    }
 
-                // Adjust for V-formation offset based on row index
-                //centerX += (i % 2 == 0) ? vBaseOffset : -vBaseOffset;
-                //centerZ += (j % 2 == 0) ? -vBaseOffset : vBaseOffset;
-                //if (i % 2 == 0)
-                //{
-                //    centerZ -= vBaseOffset;
-                //}
-                //else
-                //{
-                //    centerZ += vBaseOffset;
-                //}
+                
 
             }
             offset += (squareSize/squaresPerSide)*100;
