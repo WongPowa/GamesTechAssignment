@@ -225,52 +225,59 @@ public class FlockManager : MonoBehaviour
                         Vector3 left = new Vector3(centerX, 0f, centerZ  - vBaseOffset * offset);
                         Vector3 right = new Vector3(centerX, 0f, -centerZ  + vBaseOffset * offset);
 
-                        Debug.DrawLine(boundingBoxCenter, transform.TransformDirection(left), Color.red, 0.5f); // Draw line from center to midpoint
-                        Debug.DrawLine(boundingBoxCenter, transform.TransformDirection(right), Color.blue, 0.5f); // Draw line from center to midpoint
-                        positions.Add(transform.TransformDirection(left)); // Set y to 0 for 2D or maintain y position for 3D
-                        positions.Add(transform.TransformDirection(right)); // Set y to 0 for 2D or maintain y position for 3D
-
+                        Debug.DrawLine(boundingBoxCenter,left, Color.red, 0.5f); // Draw line from center to midpoint
+                        Debug.DrawLine(boundingBoxCenter, right, Color.blue, 0.5f); // Draw line from center to midpoint
+                        positions.Add(left); // Set y to 0 for 2D or maintain y position for 3D
+                        positions.Add(right); // Set y to 0 for 2D or maintain y position for 3D
 
                     }
-
-                
-
             }
             offset += (squareSize/squaresPerSide)*100;
         }
 
         return positions;
     }
+
     public List<Vector3> CalculateSquareFormationPositions(int size, Vector3 boundingBoxCenter, Vector2 boundingBoxSize)
     {
         // Calculate number of squares per side
         int squaresPerSide = (int)Mathf.Sqrt(size);
+        if (squaresPerSide * squaresPerSide != size)
+        {
+            Debug.LogError("Size must be a perfect square.");
+            return null;
+        }
+
         // Calculate size of each square
         float squareSize = boundingBoxSize.x / squaresPerSide;
 
+        // Get the GameObject's rotation around the y-axis
+        Quaternion rotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
+
         // List to store midpoint positions
         List<Vector3> positions = new List<Vector3>();
+
         for (int i = 0; i < squaresPerSide; i++)
         {
             for (int j = 0; j < squaresPerSide; j++)
             {
-                // Calculate center position of the square
+                // Calculate center position of each square in local space relative to the bounding box center
+                float localX = (i + 0.5f) * squareSize - (boundingBoxSize.x * 0.5f);
+                float localZ = (j + 0.5f) * squareSize - (boundingBoxSize.y * 0.5f);
+                Vector3 localPosition = new Vector3(localX, 0, localZ);
 
-                float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
-                float centerZ = boundingBoxCenter.z + (j + 0.5f) * squareSize;
+                // Transform local position to world position by applying rotation
+                Vector3 worldPosition = boundingBoxCenter + rotation * localPosition;
 
-                Vector3 midpoint = new Vector3(centerX, 0f, centerZ);
+                positions.Add(worldPosition);
 
-                Debug.DrawLine(boundingBoxCenter, transform.TransformDirection(midpoint), Color.red, 0.5f); // Draw line from center to midpoint
-                    
-                positions.Add(transform.TransformDirection(midpoint)); // Set y to 0 for 2D or maintain y position for 3D
-                    
-
+                // Optional: Visual debugging to show the line from the actual center to the calculated position
+                Debug.DrawLine(boundingBoxCenter, worldPosition, Color.red, 1f);
             }
-           
         }
 
         return positions;
     }
+
 
 }
