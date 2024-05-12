@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748171, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -17132,7 +17132,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &691228644
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17152,7 +17152,7 @@ MonoBehaviour:
   _maxSpeed: 4
   _cohesionDistance: 5
   _avoidanceDistance: 5
-  _aligementDistance: 5
+  _alignmentDistance: 0
   _obstacleDistance: 10
   _boundsDistance: 5
   _leaderDistance: 5
@@ -17160,7 +17160,7 @@ MonoBehaviour:
   _arrivalStopDistance: 0.01
   _cohesionWeight: 2
   _avoidanceWeight: 5
-  _aligementWeight: 5
+  _alignmentWeight: 0
   _obstacleWeight: 10
   _boundsWeight: 2
   _arrivalWeight: 10
@@ -45821,7 +45821,7 @@ MonoBehaviour:
   _maxSpeed: 4
   _cohesionDistance: 5
   _avoidanceDistance: 5
-  _aligementDistance: 5
+  _alignmentDistance: 0
   _obstacleDistance: 10
   _boundsDistance: 5
   _leaderDistance: 5
@@ -45829,7 +45829,7 @@ MonoBehaviour:
   _arrivalStopDistance: 0.01
   _cohesionWeight: 2
   _avoidanceWeight: 5
-  _aligementWeight: 5
+  _alignmentWeight: 0
   _obstacleWeight: 10
   _boundsWeight: 2
   _arrivalWeight: 10
@@ -45853,7 +45853,7 @@ Transform:
   m_GameObject: {fileID: 1945991814}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 48, y: 0.52, z: 157.5}
+  m_LocalPosition: {x: 50.5, y: 0, z: 159.99}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

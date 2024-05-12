@@ -107,7 +107,6 @@ public class FlockManager : MonoBehaviour
 
     private void Update()
     {
-
         if (formVShape)
         {
 
@@ -128,7 +127,15 @@ public class FlockManager : MonoBehaviour
 
 
         DrawBox(transform.position, Quaternion.identity, spawnBounds, Color.red);
-        //transform.position += Vector3.right*Time.deltaTime;
+        //transform.position += Vector3.right * Time.deltaTime;
+        if (Input.GetKey(KeyCode.A))
+        {
+            transform.Rotate(Vector3.up * 1 * Time.deltaTime);
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            transform.Rotate(-Vector3.up * 1 * Time.deltaTime);
+        }
     }
 
     private void GenerateUnits()
@@ -209,13 +216,10 @@ public class FlockManager : MonoBehaviour
         float squareSize = boundingBoxSize.x / squaresPerSide;
 
         // Calculate V-formation offset
-        //float vBaseOffset = boundingBoxSize.x * Mathf.Tan(Mathf.Deg2Rad * vAngle/2)/2;
         float vBaseOffset = vAngle / 2;
         float offset = 0f;
         // List to store midpoint positions
-        List<Vector3> positions = new List<Vector3>();
-
-        Quaternion rotation = transform.rotation;
+        List<Vector3> localPositions = new List<Vector3>(); // Store positions in local space
 
         for (int i = 0; i < squaresPerSide; i++)
         {
@@ -223,54 +227,110 @@ public class FlockManager : MonoBehaviour
             {
                 if (i == j)
                 {
-                    float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
-                    float centerZ = boundingBoxCenter.z + (j + 0.5f) * squareSize;
+                    float centerX = (i + 0.5f) * squareSize;
+                    float centerZ = (j + 0.5f) * squareSize;
 
                     Vector3 left = new Vector3(centerX, 0f, centerZ - vBaseOffset * offset);
                     Vector3 right = new Vector3(centerX, 0f, -centerZ + vBaseOffset * offset);
-                    left = rotation * left;
-                    right = rotation * right;
-                    left = transform.TransformPoint(left);
-                    right = transform.TransformPoint(right);
-                    Debug.DrawLine(transform.position, left, Color.red, 0.5f); // Draw line from center to midpoint
-                    Debug.DrawLine(transform.position, right, Color.blue, 0.5f); // Draw line from center to midpoint
-                    positions.Add(left); // Set y to 0 for 2D or maintain y position for 3D
-                    positions.Add(right); // Set y to 0 for 2D or maintain y position for 3D
-
-
+                   
+                    localPositions.Add(left);
+                    localPositions.Add(right);
                 }
-
             }
             offset += (squareSize / squaresPerSide) * 100;
         }
 
-        return positions;
+        // Transform local positions to world space
+        List<Vector3> worldPositions = new List<Vector3>();
+        foreach (Vector3 localPos in localPositions)
+        {
+            worldPositions.Add(transform.TransformPoint(localPos));
+        }
+
+        return worldPositions;
     }
+
+    //public List<Vector3> CalculateVFormationPositions(int size, Vector3 boundingBoxCenter, Vector2 boundingBoxSize, float vAngle)
+    //{
+    //    // Calculate number of squares per side
+    //    int squaresPerSide = size / 2;
+    //    // Calculate size of each square
+    //    float squareSize = boundingBoxSize.x / squaresPerSide;
+
+    //    // Calculate V-formation offset
+    //    float vBaseOffset = vAngle / 2;
+    //    float offset = 0f;
+    //    // List to store midpoint positions
+    //    List<Vector3> positions = new List<Vector3>();
+
+    //    // Get the rotation of the GameObject
+    //    Quaternion rotation = transform.rotation;
+
+    //    for (int i = 0; i < squaresPerSide; i++)
+    //    {
+    //        for (int j = 0; j < squaresPerSide; j++)
+    //        {
+    //            if (i == j)
+    //            {
+    //                float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
+    //                float centerZ = boundingBoxCenter.z + (j + 0.5f) * squareSize;
+
+    //                Vector3 left = new Vector3(centerX, 0f, centerZ - vBaseOffset * offset);
+    //                Vector3 right = new Vector3(centerX, 0f, -centerZ + vBaseOffset * offset);
+
+    //                // Rotate the positions based on the GameObject's rotation
+    //                left = rotation * left;
+    //                right = rotation * right;
+
+    //                Debug.DrawLine(boundingBoxCenter, transform.TransformPoint(left), Color.red, 0.5f); // Draw line from center to midpoint
+    //                Debug.DrawLine(boundingBoxCenter, transform.TransformPoint(right), Color.blue, 0.5f); // Draw line from center to midpoint
+    //                positions.Add(transform.TransformPoint(left)); // Set y to 0 for 2D or maintain y position for 3D
+    //                positions.Add(transform.TransformPoint(right)); // Set y to 0 for 2D or maintain y position for 3D
+    //            }
+    //        }
+    //        offset += (squareSize / squaresPerSide) * 100;
+    //    }
+
+    //    return positions;
+    //}
     public List<Vector3> CalculateSquareFormationPositions(int size, Vector3 boundingBoxCenter, Vector2 boundingBoxSize)
     {
         // Calculate number of squares per side
         int squaresPerSide = (int)Mathf.Sqrt(size);
+        if (squaresPerSide * squaresPerSide != size)
+        {
+            Debug.LogError("Size must be a perfect square.");
+            return null;
+        }
+
         // Calculate size of each square
         float squareSize = boundingBoxSize.x / squaresPerSide;
 
+        // Get the GameObject's rotation around the y-axis
+        Quaternion rotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
+
         // List to store midpoint positions
         List<Vector3> positions = new List<Vector3>();
+
         for (int i = 0; i < squaresPerSide; i++)
         {
             for (int j = 0; j < squaresPerSide; j++)
             {
-                // Calculate center position of the square
 
-                float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
-                float centerZ = boundingBoxCenter.z + (j + 0.5f) * squareSize;
+                // Calculate center position of each square in local space relative to the bounding box center
+                float localX = (i + 0.5f) * squareSize - (boundingBoxSize.x * 0.5f);
+                float localZ = (j + 0.5f) * squareSize - (boundingBoxSize.y * 0.5f);
+                Vector3 localPosition = new Vector3(localX, 0, localZ);
 
-                Vector3 midpoint = new Vector3(centerX, 0f, centerZ + transform.localPosition.z);
-
-                Debug.DrawLine(boundingBoxCenter, transform.TransformDirection(midpoint), Color.red, 0.5f); // Draw line from center to midpoint
-
-                positions.Add(transform.TransformDirection(midpoint)); // Set y to 0 for 2D or maintain y position for 3D
+                // Transform local position to world position by applying rotation
+                Vector3 worldPosition = boundingBoxCenter + rotation * localPosition;
 
 
+
+                positions.Add(worldPosition);
+
+                // Optional: Visual debugging to show the line from the actual center to the calculated position
+                Debug.DrawLine(boundingBoxCenter, worldPosition, Color.red, 1f);
             }
 
         }
