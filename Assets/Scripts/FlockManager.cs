@@ -4,6 +4,8 @@ using System.Net;
 
 public class FlockManager : MonoBehaviour
 {
+    public bool isMoving = false;
+    public bool enableControls = false;
     [Header("Spawn Setup")]
     [SerializeField] private FlockUnit flockUnitPrefab;
     [SerializeField] public int flockSize;
@@ -127,17 +129,32 @@ public class FlockManager : MonoBehaviour
 
 
         DrawBox(transform.position, Quaternion.identity, spawnBounds, Color.red);
-        //transform.position += Vector3.right * Time.deltaTime;
-        if (Input.GetKey(KeyCode.A))
+        if (isMoving)
         {
-            transform.Rotate(Vector3.up * 1 * Time.deltaTime);
+            Move();
         }
-        else if (Input.GetKey(KeyCode.D))
+        if (enableControls)
         {
-            transform.Rotate(-Vector3.up * 1 * Time.deltaTime);
+            Controls();
         }
     }
+    private void Move()
+    {
+        transform.localPosition += -transform.right * Time.deltaTime * 5.0f;
 
+       
+    }
+    void Controls()
+    {
+        if (Input.GetKey(KeyCode.D))
+        {
+            transform.Rotate(Vector3.up * 50.0f * Time.deltaTime);
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            transform.Rotate(-Vector3.up * 50.0f * Time.deltaTime);
+        }
+    }
     private void GenerateUnits()
     {
         allUnits = new FlockUnit[flockSize];
@@ -204,8 +221,11 @@ public class FlockManager : MonoBehaviour
         List<Vector3> midpoints = CalculateSquareFormationPositions(flockSize, transform.position, boundBoxSize);
         for (int i = 0; i < midpoints.Count; i++)
         {
-            Vector3 midpoint = midpoints[i];
-            allUnits[i].MoveUnit(midpoint);
+            
+                Vector3 midpoint = midpoints[i];
+                allUnits[i].MoveUnit(midpoint);
+            
+           
         }
     }
     public List<Vector3> CalculateVFormationPositions(int size, Vector3 boundingBoxCenter, Vector2 boundingBoxSize, float vAngle)
@@ -297,11 +317,7 @@ public class FlockManager : MonoBehaviour
     {
         // Calculate number of squares per side
         int squaresPerSide = (int)Mathf.Sqrt(size);
-        if (squaresPerSide * squaresPerSide != size)
-        {
-            Debug.LogError("Size must be a perfect square.");
-            return null;
-        }
+        
 
         // Calculate size of each square
         float squareSize = boundingBoxSize.x / squaresPerSide;
@@ -324,8 +340,6 @@ public class FlockManager : MonoBehaviour
 
                 // Transform local position to world position by applying rotation
                 Vector3 worldPosition = boundingBoxCenter + rotation * localPosition;
-
-
 
                 positions.Add(worldPosition);
 

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -309,9 +309,84 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &2142037308
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2142037309}
+  - component: {fileID: 2142037310}
+  m_Layer: 0
+  m_Name: FlockManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2142037309
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2142037308}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2142037310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2142037308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b19e9f0d478526d47aa2e6e62f174eaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flockUnitPrefab: {fileID: 2120050980181151097, guid: 5f78e650c1aaa7647a62ce679d16b26f, type: 3}
+  flockSize: 50
+  spawnBounds: {x: 15, y: 0, z: 15}
+  _minSpeed: 3.02
+  _maxSpeed: 7.93
+  _cohesionDistance: 5
+  _avoidanceDistance: 5
+  _alignmentDistance: 5
+  _obstacleDistance: 0
+  _boundsDistance: 1
+  _leaderDistance: 0
+  _arrivalSlowDistance: 5
+  _arrivalStopDistance: 0.01
+  _cohesionWeight: 5
+  _avoidanceWeight: 5
+  _alignmentWeight: 5
+  _obstacleWeight: 0
+  _boundsWeight: 1
+  _arrivalWeight: 10
+  _avoidLeaderPathWeight: 0.01
+  isLeaderOn: 0
+  targets: []
+  positionToFollow: {x: 0, y: 0, z: 0}
+  objectSpawnPosition: {x: 0, y: 0, z: 0}
+  timeToLeader: 0
+  formVShape: 0
+  angle: 0
+  vBoundingBoxSize: 15
+  formSquareShape: 0
+  squareBoundingBoxSize: 15
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 252184919}
   - {fileID: 1683405581}
+  - {fileID: 2142037309}

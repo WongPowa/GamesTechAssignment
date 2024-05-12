@@ -410,8 +410,6 @@ public class FlockUnit : MonoBehaviour
         if (Vector3.Distance(position, Vector3.zero) == 0)
             return Vector3.zero;
 
-        Debug.Log("Position" + position.y);
-        Debug.Log("myTransform" + myTransform.position.y);
 
         arrivalVector = position - myTransform.position;
 

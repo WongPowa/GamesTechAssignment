@@ -17127,12 +17127,12 @@ GameObject:
   - component: {fileID: 691228646}
   - component: {fileID: 691228644}
   m_Layer: 0
-  m_Name: FlockManager
+  m_Name: RATS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &691228644
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17145,14 +17145,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b19e9f0d478526d47aa2e6e62f174eaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isMoving: 1
+  enableControls: 1
   flockUnitPrefab: {fileID: 463247095843562078, guid: e482b6480c2a1354e988d5fa29c4b486, type: 3}
   flockSize: 25
   spawnBounds: {x: 20, y: 0, z: 20}
-  _minSpeed: 2
-  _maxSpeed: 4
+  _minSpeed: 8
+  _maxSpeed: 10
   _cohesionDistance: 5
   _avoidanceDistance: 5
-  _alignmentDistance: 0
+  _alignmentDistance: 5
   _obstacleDistance: 10
   _boundsDistance: 5
   _leaderDistance: 5
@@ -17162,9 +17164,9 @@ MonoBehaviour:
   _avoidanceWeight: 5
   _alignmentWeight: 0
   _obstacleWeight: 10
-  _boundsWeight: 2
+  _boundsWeight: 1
   _arrivalWeight: 10
-  _avoidLeaderPathWeight: 5
+  _avoidLeaderPathWeight: 0.01
   isLeaderOn: 0
   targets: []
   positionToFollow: {x: 0, y: 0, z: -1}
@@ -17184,10 +17186,11 @@ Transform:
   m_GameObject: {fileID: 691228643}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 30.8, y: 0.52, z: 102.1}
+  m_LocalPosition: {x: 34.37, y: 0, z: 105.83}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1167795645}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &691653173
@@ -27632,13 +27635,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1167795642}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: -0.08, y: 32.390648, z: 1.5358509}
+  m_LocalRotation: {x: -0.50000036, y: 0.49999964, z: -0.49999964, w: -0.50000036}
+  m_LocalPosition: {x: 0, y: 41.24, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 691228646}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1001 &1168312159
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -45796,7 +45799,7 @@ GameObject:
   - component: {fileID: 1945991816}
   - component: {fileID: 1945991815}
   m_Layer: 0
-  m_Name: FlockManager Army
+  m_Name: humans
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45814,11 +45817,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b19e9f0d478526d47aa2e6e62f174eaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flockUnitPrefab: {fileID: 2941041112776217607, guid: 10eda4decf35c3e469784d9af3c14219, type: 3}
-  flockSize: 25
+  isMoving: 0
+  enableControls: 0
+  flockUnitPrefab: {fileID: 2120050980181151097, guid: 5f78e650c1aaa7647a62ce679d16b26f, type: 3}
+  flockSize: 100
   spawnBounds: {x: 20, y: 0, z: 20}
-  _minSpeed: 2
-  _maxSpeed: 4
+  _minSpeed: 1
+  _maxSpeed: 3
   _cohesionDistance: 5
   _avoidanceDistance: 5
   _alignmentDistance: 0
@@ -45831,7 +45836,7 @@ MonoBehaviour:
   _avoidanceWeight: 5
   _alignmentWeight: 0
   _obstacleWeight: 10
-  _boundsWeight: 2
+  _boundsWeight: 1
   _arrivalWeight: 10
   _avoidLeaderPathWeight: 5
   isLeaderOn: 0
@@ -45852,13 +45857,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1945991814}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: 1, z: -0, w: -0.0000002533197}
   m_LocalPosition: {x: 50.5, y: 0, z: 159.99}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1001 &1946010959
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -51738,7 +51743,6 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1167795645}
   - {fileID: 691228646}
   - {fileID: 1945991816}
   - {fileID: 1468693269}
