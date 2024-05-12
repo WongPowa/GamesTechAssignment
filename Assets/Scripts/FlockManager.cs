@@ -184,7 +184,7 @@ public class FlockManager : MonoBehaviour
     private void FormVShape()
     {
         Vector2 boundBoxSize = new Vector2(vBoundingBoxSize, vBoundingBoxSize);
-        List<Vector3> midpoints = CalculateVFormationPositions(flockSize, transform.position, boundBoxSize, angle);
+        List<Vector3> midpoints = CalculateVFormationPositions(flockSize, transform.localPosition, boundBoxSize, angle);
         for(int i = 0; i < midpoints.Count; i++) {
             Vector3 midpoint = midpoints[i];
             allUnits[i].MoveUnit(midpoint);
@@ -212,6 +212,7 @@ public class FlockManager : MonoBehaviour
         float offset = 0f;
         // List to store midpoint positions
         List<Vector3> positions = new List<Vector3>();
+        Quaternion rotation = transform.rotation;
         for (int i = 0; i < squaresPerSide; i++)
         {
             for (int j = 0; j < squaresPerSide; j++)
@@ -220,64 +221,58 @@ public class FlockManager : MonoBehaviour
                     if (i == j)
                     {
                         float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
-                        float centerZ = boundingBoxCenter.z + (i + 0.5f) * squareSize;
+                        float centerZ = boundingBoxCenter.z + (j + 0.5f) * squareSize;
 
                         Vector3 left = new Vector3(centerX, 0f, centerZ  - vBaseOffset * offset);
                         Vector3 right = new Vector3(centerX, 0f, -centerZ  + vBaseOffset * offset);
+                    left = rotation * left;
+                    right = rotation * right;
+                    Debug.DrawLine(boundingBoxCenter, transform.TransformPoint(left), Color.red, 0.5f); // Draw line from center to midpoint
+                    Debug.DrawLine(boundingBoxCenter, transform.TransformPoint(right), Color.blue, 0.5f); // Draw line from center to midpoint
+                    positions.Add(transform.TransformPoint(left)); // Set y to 0 for 2D or maintain y position for 3D
+                    positions.Add(transform.TransformPoint(right)); // Set y to 0 for 2D or maintain y position for 3D
 
-                        Debug.DrawLine(boundingBoxCenter,left, Color.red, 0.5f); // Draw line from center to midpoint
-                        Debug.DrawLine(boundingBoxCenter, right, Color.blue, 0.5f); // Draw line from center to midpoint
-                        positions.Add(left); // Set y to 0 for 2D or maintain y position for 3D
-                        positions.Add(right); // Set y to 0 for 2D or maintain y position for 3D
 
-                    }
+                }
+
+                
+
             }
             offset += (squareSize/squaresPerSide)*100;
         }
 
         return positions;
     }
-
     public List<Vector3> CalculateSquareFormationPositions(int size, Vector3 boundingBoxCenter, Vector2 boundingBoxSize)
     {
         // Calculate number of squares per side
         int squaresPerSide = (int)Mathf.Sqrt(size);
-        if (squaresPerSide * squaresPerSide != size)
-        {
-            Debug.LogError("Size must be a perfect square.");
-            return null;
-        }
-
         // Calculate size of each square
         float squareSize = boundingBoxSize.x / squaresPerSide;
 
-        // Get the GameObject's rotation around the y-axis
-        Quaternion rotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
-
         // List to store midpoint positions
         List<Vector3> positions = new List<Vector3>();
-
         for (int i = 0; i < squaresPerSide; i++)
         {
             for (int j = 0; j < squaresPerSide; j++)
             {
-                // Calculate center position of each square in local space relative to the bounding box center
-                float localX = (i + 0.5f) * squareSize - (boundingBoxSize.x * 0.5f);
-                float localZ = (j + 0.5f) * squareSize - (boundingBoxSize.y * 0.5f);
-                Vector3 localPosition = new Vector3(localX, 0, localZ);
+                // Calculate center position of the square
 
-                // Transform local position to world position by applying rotation
-                Vector3 worldPosition = boundingBoxCenter + rotation * localPosition;
+                float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
+                float centerZ = boundingBoxCenter.z + (j + 0.5f) * squareSize;
 
-                positions.Add(worldPosition);
+                Vector3 midpoint = new Vector3(centerX, 0f, centerZ+transform.localPosition.z);
 
-                // Optional: Visual debugging to show the line from the actual center to the calculated position
-                Debug.DrawLine(boundingBoxCenter, worldPosition, Color.red, 1f);
+                Debug.DrawLine(boundingBoxCenter, transform.TransformDirection(midpoint), Color.red, 0.5f); // Draw line from center to midpoint
+                    
+                positions.Add(transform.TransformDirection(midpoint)); // Set y to 0 for 2D or maintain y position for 3D
+                    
+
             }
+           
         }
 
         return positions;
     }
-
 
 }
