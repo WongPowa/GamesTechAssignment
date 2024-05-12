@@ -257,9 +257,9 @@ public class FlockManager : MonoBehaviour
                 // Calculate center position of the square
 
                 float centerX = boundingBoxCenter.x + (i + 0.5f) * squareSize;
-                float centerZ = boundingBoxCenter.y + (j + 0.5f) * squareSize;
+                float centerZ = boundingBoxCenter.z + (j + 0.5f) * squareSize;
 
-                Vector3 midpoint = new Vector3(centerX, 0f, centerZ+ transform.localPosition.z);
+                Vector3 midpoint = new Vector3(centerX, 0f, centerZ);
 
                 Debug.DrawLine(boundingBoxCenter, transform.TransformDirection(midpoint), Color.red, 0.5f); // Draw line from center to midpoint
                     
